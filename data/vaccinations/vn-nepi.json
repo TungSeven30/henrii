@@ -1,0 +1,7 @@
+[
+  { "code": "bcg_1", "name": "BCG", "ageDays": 0 },
+  { "code": "hep_b_1", "name": "Hepatitis B (Birth dose)", "ageDays": 0 },
+  { "code": "dpt_hib_hepb_1", "name": "DPT-Hib-HepB (Dose 1)", "ageDays": 60 },
+  { "code": "opv_1", "name": "OPV (Dose 1)", "ageDays": 60 },
+  { "code": "mmr_1", "name": "Measles/MMR (Dose 1)", "ageDays": 270 }
+]

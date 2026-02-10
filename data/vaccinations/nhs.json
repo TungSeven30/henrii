@@ -1,0 +1,7 @@
+[
+  { "code": "6in1_1", "name": "6-in-1 (Dose 1)", "ageDays": 56 },
+  { "code": "rotavirus_1", "name": "Rotavirus (Dose 1)", "ageDays": 56 },
+  { "code": "menb_1", "name": "MenB (Dose 1)", "ageDays": 56 },
+  { "code": "6in1_2", "name": "6-in-1 (Dose 2)", "ageDays": 84 },
+  { "code": "mmr_1", "name": "MMR (Dose 1)", "ageDays": 365 }
+]

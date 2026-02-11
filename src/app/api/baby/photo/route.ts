@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { consumeScopedRateLimit } from "@/lib/rate-limit/consume";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -123,6 +124,22 @@ export async function POST(request: Request) {
 
   if (userError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limiting: 20 uploads per hour per user
+  const rateLimit = await consumeScopedRateLimit({
+    supabase,
+    userId: user.id,
+    scope: "photo_upload",
+    limit: 20,
+    windowMinutes: 60,
+  });
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Photo upload rate limit exceeded", resetAt: rateLimit.resetAt },
+      { status: 429, headers: { "retry-after": String(Math.ceil((new Date(rateLimit.resetAt).getTime() - Date.now()) / 1000)) } }
+    );
   }
 
   const formData = await request.formData();

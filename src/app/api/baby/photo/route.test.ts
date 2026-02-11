@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { createSupabaseServerClientMock, createSupabaseAdminClientMock } = vi.hoisted(
+const { createSupabaseServerClientMock, createSupabaseAdminClientMock, consumeScopedRateLimitMock } = vi.hoisted(
   () => ({
     createSupabaseServerClientMock: vi.fn(),
     createSupabaseAdminClientMock: vi.fn(),
+    consumeScopedRateLimitMock: vi.fn(),
   })
 );
 
@@ -13,6 +14,10 @@ vi.mock("@/lib/supabase/server", () => ({
 
 vi.mock("@/lib/supabase/admin", () => ({
   createSupabaseAdminClient: createSupabaseAdminClientMock,
+}));
+
+vi.mock("@/lib/rate-limit/consume", () => ({
+  consumeScopedRateLimit: consumeScopedRateLimitMock,
 }));
 
 import { POST } from "./route";
@@ -140,10 +145,89 @@ describe("POST /api/baby/photo", () => {
     createSupabaseAdminClientMock.mockImplementation(() => {
       throw new Error("Admin client not available");
     });
+    // Default: rate limit allows requests
+    consumeScopedRateLimitMock.mockResolvedValue({
+      allowed: true,
+      limit: 20,
+      remaining: 19,
+      resetAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  describe("rate limiting", () => {
+    it("should allow uploads when rate limit is not exceeded", async () => {
+      const { supabase, storageUpload } = createPostSupabaseMock();
+      createSupabaseServerClientMock.mockResolvedValue(supabase);
+
+      const file = createMockFile("photo.jpg", jpegBytes, "image/jpeg");
+      const request = createPhotoUploadRequest("baby_1", file);
+
+      const response = await POST(request);
+      expect(response.status).toBe(200);
+      expect(storageUpload).toHaveBeenCalled();
+      expect(consumeScopedRateLimitMock).toHaveBeenCalledWith({
+        supabase,
+        userId: "user_1",
+        scope: "photo_upload",
+        limit: 20,
+        windowMinutes: 60,
+      });
+    });
+
+    it("should reject uploads with 429 when rate limit is exceeded", async () => {
+      const { supabase, storageUpload } = createPostSupabaseMock();
+      createSupabaseServerClientMock.mockResolvedValue(supabase);
+
+      // Rate limit exceeded
+      const resetAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+      consumeScopedRateLimitMock.mockResolvedValue({
+        allowed: false,
+        limit: 20,
+        remaining: 0,
+        resetAt,
+      });
+
+      const file = createMockFile("photo.jpg", jpegBytes, "image/jpeg");
+      const request = createPhotoUploadRequest("baby_1", file);
+
+      const response = await POST(request);
+      const body = await response.json();
+
+      expect(response.status).toBe(429);
+      expect(body.error).toContain("rate limit exceeded");
+      expect(body.resetAt).toBe(resetAt);
+      expect(response.headers.get("retry-after")).toBeTruthy();
+      expect(storageUpload).not.toHaveBeenCalled();
+    });
+
+    it("should include retry-after header when rate limited", async () => {
+      const { supabase } = createPostSupabaseMock();
+      createSupabaseServerClientMock.mockResolvedValue(supabase);
+
+      const futureReset = new Date(Date.now() + 25 * 60 * 1000); // 25 minutes from now
+      consumeScopedRateLimitMock.mockResolvedValue({
+        allowed: false,
+        limit: 20,
+        remaining: 0,
+        resetAt: futureReset.toISOString(),
+      });
+
+      const file = createMockFile("photo.jpg", jpegBytes, "image/jpeg");
+      const request = createPhotoUploadRequest("baby_1", file);
+
+      const response = await POST(request);
+      const retryAfter = response.headers.get("retry-after");
+
+      expect(response.status).toBe(429);
+      expect(retryAfter).toBeTruthy();
+      // Should be approximately 25 minutes = 1500 seconds
+      expect(Number(retryAfter)).toBeGreaterThan(1400);
+      expect(Number(retryAfter)).toBeLessThanOrEqual(1500);
+    });
   });
 
   describe("file content type validation", () => {

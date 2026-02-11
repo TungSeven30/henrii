@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextRequest } from "next/server";
 
 const createSupabaseAdminClientMock = vi.hoisted(() => vi.fn());
 
@@ -17,7 +18,7 @@ describe("GET /api/cron/reminders", () => {
   it("should reject requests with 503 if CRON_SECRET is not configured", async () => {
     process.env.CRON_SECRET = "";
 
-    const request = new Request("https://app.henrii.app/api/cron/reminders", {
+    const request = new NextRequest("https://app.henrii.app/api/cron/reminders", {
       method: "GET",
     });
 
@@ -29,7 +30,7 @@ describe("GET /api/cron/reminders", () => {
   });
 
   it("should reject requests with 401 if authorization header is missing", async () => {
-    const request = new Request("https://app.henrii.app/api/cron/reminders", {
+    const request = new NextRequest("https://app.henrii.app/api/cron/reminders", {
       method: "GET",
     });
 
@@ -41,7 +42,7 @@ describe("GET /api/cron/reminders", () => {
   });
 
   it("should reject requests with 401 if authorization header is invalid", async () => {
-    const request = new Request("https://app.henrii.app/api/cron/reminders", {
+    const request = new NextRequest("https://app.henrii.app/api/cron/reminders", {
       method: "GET",
       headers: {
         authorization: "Bearer wrong-secret",

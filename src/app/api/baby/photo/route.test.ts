@@ -23,7 +23,7 @@ function createMockFile(
   bytes: Uint8Array,
   type?: string
 ): File {
-  const blob = new Blob([bytes.buffer], { type: type || "application/octet-stream" });
+  const blob = new Blob([new Uint8Array(bytes)], { type: type || "application/octet-stream" });
   return new File([blob], name, { type: type || "application/octet-stream" });
 }
 
@@ -292,6 +292,39 @@ describe("POST /api/baby/photo", () => {
 
       expect(response.status).toBe(400);
       expect(body.error).toContain("Invalid file type");
+      expect(storageUpload).not.toHaveBeenCalled();
+    });
+
+    it("should reject files with non-image MIME type", async () => {
+      const { supabase, storageUpload } = createPostSupabaseMock();
+      createSupabaseServerClientMock.mockResolvedValue(supabase);
+
+      // Valid JPEG bytes but wrong MIME type (application/octet-stream)
+      const file = createMockFile("photo.jpg", jpegBytes, "application/octet-stream");
+      const request = createPhotoUploadRequest("baby_1", file);
+
+      const response = await POST(request);
+      const body = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(body.error).toContain("Invalid MIME type");
+      expect(body.error).toContain("application/octet-stream");
+      expect(storageUpload).not.toHaveBeenCalled();
+    });
+
+    it("should reject files with dangerous MIME types", async () => {
+      const { supabase, storageUpload } = createPostSupabaseMock();
+      createSupabaseServerClientMock.mockResolvedValue(supabase);
+
+      // Valid JPEG bytes but dangerous MIME type (application/x-php)
+      const file = createMockFile("photo.jpg", jpegBytes, "application/x-php");
+      const request = createPhotoUploadRequest("baby_1", file);
+
+      const response = await POST(request);
+      const body = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(body.error).toContain("Invalid MIME type");
       expect(storageUpload).not.toHaveBeenCalled();
     });
 

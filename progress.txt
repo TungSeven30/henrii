@@ -1,0 +1,1 @@
+fix-003: Fixed TypeScript error in photo upload test (bytes.buffer for Blob)

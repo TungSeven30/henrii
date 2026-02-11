@@ -150,6 +150,15 @@ export async function POST(request: Request) {
     );
   }
 
+  // Validate file MIME type matches expected type for extension
+  const expectedMimeType = ALLOWED_IMAGE_TYPES[ext].mimeType;
+  if (file.type && !expectedMimeType.includes(file.type.toLowerCase()) && file.type !== expectedMimeType) {
+    return NextResponse.json(
+      { error: `Invalid MIME type. Expected ${expectedMimeType}, received ${file.type}` },
+      { status: 400 }
+    );
+  }
+
   // Validate actual file content using magic bytes
   const validation = await validateImageContent(file, ext);
   if (!validation.valid) {

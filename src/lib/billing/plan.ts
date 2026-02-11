@@ -1,8 +1,11 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
+
 export type UserPlan = "free" | "premium";
 
 type SubscriptionRow = {
-  plan: UserPlan;
-  status: "active" | "canceled" | "past_due" | "incomplete";
+  plan: string;
+  status: string;
   current_period_end: string | null;
 };
 
@@ -18,19 +21,13 @@ export function hasPremiumAccess(subscription: SubscriptionRow | null): boolean 
   return subscription.status === "active";
 }
 
+type AppSupabaseClient = SupabaseClient<Database>;
+
 export async function getUserPlan({
   supabase,
   userId,
 }: {
-  supabase: {
-    from: (table: string) => {
-      select: (columns: string) => {
-        eq: (column: string, value: unknown) => {
-          maybeSingle: () => Promise<{ data: SubscriptionRow | null; error: { message: string } | null }>;
-        };
-      };
-    };
-  };
+  supabase: AppSupabaseClient;
   userId: string;
 }): Promise<{ plan: UserPlan; premium: boolean }> {
   const { data } = await supabase
@@ -46,8 +43,9 @@ export async function getUserPlan({
     };
   }
 
+  const plan: UserPlan = data.plan === "premium" ? "premium" : "free";
   return {
-    plan: data.plan,
+    plan,
     premium: hasPremiumAccess(data),
   };
 }

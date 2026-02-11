@@ -65,7 +65,7 @@ async function ensureCanWriteOrRedirect({
   userId: string;
 }) {
   const canWrite = await canWriteToBaby({
-    supabase: supabase as unknown as Parameters<typeof canWriteToBaby>[0]["supabase"],
+    supabase,
     babyId: activeBabyId,
     userId,
   });

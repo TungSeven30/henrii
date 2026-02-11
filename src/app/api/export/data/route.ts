@@ -29,7 +29,7 @@ export async function GET(request: Request) {
   }
 
   const rateLimit = await consumeScopedRateLimit({
-    supabase: supabase as unknown as Parameters<typeof consumeScopedRateLimit>[0]["supabase"],
+    supabase,
     userId: user.id,
     scope: "export_data",
     limit: 20,

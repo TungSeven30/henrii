@@ -1,9 +1,7 @@
-import type {
-  DiaperType,
-  EventMutatePayload,
-  EventTable,
-  FeedingType,
-} from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database, Json } from "@/types/database";
+import type { EventMutatePayload, EventTable } from "./types";
+import { isDiaperType, isFeedingType, parseIsoTimestamp } from "./parse";
 
 type EventRow = {
   id: string;
@@ -16,16 +14,7 @@ type TableSpec = {
   happenedAtColumn: string;
 };
 
-type RowResponse = PromiseLike<{
-  data: unknown;
-  error: { message: string } | null;
-}>;
-
-type DeleteResponse = PromiseLike<{ error: { message: string } | null }>;
-
-type SupabaseLike = {
-  from: (table: string) => unknown;
-};
+type AppSupabaseClient = SupabaseClient<Database>;
 
 const TABLES: Record<EventTable, TableSpec> = {
   feedings: { happenedAtColumn: "started_at" },
@@ -40,27 +29,6 @@ export type MutateEventResponse = {
 
 function isEventTable(value: unknown): value is EventTable {
   return value === "feedings" || value === "sleep_sessions" || value === "diaper_changes";
-}
-
-function isFeedingType(value: unknown): value is FeedingType {
-  return value === "breast" || value === "bottle" || value === "solid";
-}
-
-function isDiaperType(value: unknown): value is DiaperType {
-  return value === "wet" || value === "dirty" || value === "mixed";
-}
-
-function parseIsoTimestamp(value: unknown): string | null {
-  if (typeof value !== "string") {
-    return null;
-  }
-
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed.toISOString();
 }
 
 export function parseEventMutatePayload(raw: unknown): EventMutatePayload | null {
@@ -174,7 +142,7 @@ async function insertMutationConflict({
   patch,
   currentSnapshot,
 }: {
-  supabase: SupabaseLike;
+  supabase: AppSupabaseClient;
   babyId: string;
   table: EventTable;
   eventId: string;
@@ -185,11 +153,7 @@ async function insertMutationConflict({
   patch: Record<string, unknown> | undefined;
   currentSnapshot: EventRow;
 }) {
-  const conflictQuery = supabase.from("mutation_conflicts") as {
-    insert: (values: Record<string, unknown>) => PromiseLike<unknown>;
-  };
-
-  await conflictQuery.insert({
+  await supabase.from("mutation_conflicts").insert({
     baby_id: babyId,
     event_table: table,
     event_id: eventId,
@@ -197,8 +161,8 @@ async function insertMutationConflict({
     reported_by: userId,
     expected_updated_at: expectedUpdatedAt,
     actual_updated_at: actualUpdatedAt,
-    attempted_patch: patch ?? null,
-    current_snapshot: currentSnapshot,
+    attempted_patch: (patch ?? null) as Json | null,
+    current_snapshot: currentSnapshot as Json,
   });
 }
 
@@ -208,33 +172,14 @@ export async function mutateEvent({
   userId,
   activeBabyId,
 }: {
-  supabase: SupabaseLike;
+  supabase: AppSupabaseClient;
   payload: EventMutatePayload;
   userId: string;
   activeBabyId: string;
 }): Promise<MutateEventResponse> {
-  const tableQuery = supabase.from(payload.table) as {
-    select: (columns: string) => {
-      eq: (column: string, value: unknown) => {
-        eq: (column: string, value: unknown) => {
-          single: () => RowResponse;
-        };
-      };
-    };
-    delete: () => {
-      eq: (column: string, value: unknown) => DeleteResponse;
-    };
-    update: (values: Record<string, unknown>) => {
-      eq: (column: string, value: unknown) => {
-        select: (columns: string) => {
-          single: () => RowResponse;
-        };
-      };
-    };
-  };
-
   const tableSpec = TABLES[payload.table];
-  const rowResponse = await tableQuery
+  const rowResponse = await supabase
+    .from(payload.table)
     .select("*")
     .eq("id", payload.id)
     .eq("baby_id", activeBabyId)
@@ -269,7 +214,12 @@ export async function mutateEvent({
   }
 
   if (payload.operation === "delete") {
-    const { error } = await tableQuery.delete().eq("id", payload.id);
+    const { error } = await supabase
+      .from(payload.table)
+      .delete()
+      .eq("id", payload.id)
+      .eq("baby_id", activeBabyId);
+
     if (error) {
       return { status: 400, body: { error: error.message } };
     }
@@ -291,19 +241,11 @@ export async function mutateEvent({
     return { status: 400, body: { error: "No valid update fields provided" } };
   }
 
-  const updatedQuery = supabase.from(payload.table) as {
-    update: (values: Record<string, unknown>) => {
-      eq: (column: string, value: unknown) => {
-        select: (columns: string) => {
-          single: () => RowResponse;
-        };
-      };
-    };
-  };
-
-  const updateResponse = await updatedQuery
-    .update(normalizedPatch)
+  const updateResponse = await supabase
+    .from(payload.table)
+    .update(normalizedPatch as never)
     .eq("id", payload.id)
+    .eq("baby_id", activeBabyId)
     .select("*")
     .single();
 

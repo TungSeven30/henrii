@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   }
 
   const canWrite = await canWriteToBaby({
-    supabase: supabase as unknown as Parameters<typeof canWriteToBaby>[0]["supabase"],
+    supabase,
     babyId: profile.active_baby_id,
     userId: user.id,
   });

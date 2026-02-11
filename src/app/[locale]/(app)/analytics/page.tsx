@@ -26,7 +26,7 @@ export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
   const t = await getTranslations({ locale, namespace: "analytics" });
   const { supabase, activeBabyId } = await getActiveBabyContext(locale);
   const plan = await getBabyPremiumStatus({
-    supabase: supabase as unknown as Parameters<typeof getBabyPremiumStatus>[0]["supabase"],
+    supabase,
     babyId: activeBabyId,
   });
 

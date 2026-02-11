@@ -34,7 +34,7 @@ export async function POST(request: Request, context: RouteContext) {
   }
 
   const canWrite = await canWriteToBaby({
-    supabase: supabase as unknown as Parameters<typeof canWriteToBaby>[0]["supabase"],
+    supabase,
     babyId: appointment.baby_id,
     userId: user.id,
   });
@@ -46,7 +46,7 @@ export async function POST(request: Request, context: RouteContext) {
   }
 
   const plan = await getBabyPremiumStatus({
-    supabase: supabase as unknown as Parameters<typeof getBabyPremiumStatus>[0]["supabase"],
+    supabase,
     babyId: appointment.baby_id,
   });
   if (!plan.premium) {

@@ -73,7 +73,7 @@ export default async function HealthPage({ params, searchParams }: HealthPagePro
   const t = await getTranslations({ locale, namespace: "health" });
   const { supabase, activeBabyId } = await getActiveBabyContext(locale);
   const plan = await getBabyPremiumStatus({
-    supabase: supabase as unknown as Parameters<typeof getBabyPremiumStatus>[0]["supabase"],
+    supabase,
     babyId: activeBabyId,
   });
 

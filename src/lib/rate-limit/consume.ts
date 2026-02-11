@@ -1,9 +1,14 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
+
 export type RateLimitResult = {
   allowed: boolean;
   limit: number;
   remaining: number;
   resetAt: string;
 };
+
+type AppSupabaseClient = SupabaseClient<Database>;
 
 function getWindowStart(windowMinutes: number, now = new Date()) {
   const totalMinutes = now.getUTCMinutes() + now.getUTCHours() * 60;
@@ -31,23 +36,7 @@ export async function consumeScopedRateLimit({
   limit,
   windowMinutes,
 }: {
-  supabase: {
-    from: (table: string) => {
-      select: (columns: string) => {
-        eq: (column: string, value: unknown) => {
-          eq: (column: string, value: unknown) => {
-            eq: (column: string, value: unknown) => {
-              maybeSingle: () => Promise<{ data: { id: string; count: number } | null; error: { message: string } | null }>;
-            };
-          };
-        };
-      };
-      insert: (values: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
-      update: (values: Record<string, unknown>) => {
-        eq: (column: string, value: unknown) => Promise<{ error: { message: string } | null }>;
-      };
-    };
-  };
+  supabase: AppSupabaseClient;
   userId: string;
   scope: string;
   limit: number;

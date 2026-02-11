@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   }
 
   const rateLimit = await consumeScopedRateLimit({
-    supabase: supabase as unknown as Parameters<typeof consumeScopedRateLimit>[0]["supabase"],
+    supabase,
     userId: user.id,
     scope: "export_pdf",
     limit: 10,
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
 
   const babyId = profile.active_baby_id;
   const plan = await getBabyPremiumStatus({
-    supabase: supabase as unknown as Parameters<typeof getBabyPremiumStatus>[0]["supabase"],
+    supabase,
     babyId,
   });
   if (!plan.premium) {

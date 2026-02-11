@@ -1,18 +1,14 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
 import type { UserPlan } from "./plan";
 
-type SupabaseLike = {
-  from: (table: string) => unknown;
-  rpc: (
-    fn: string,
-    args: Record<string, unknown>,
-  ) => Promise<{ data: boolean | null; error: { message: string } | null }>;
-};
+type AppSupabaseClient = SupabaseClient<Database>;
 
 export async function getBabyPremiumStatus({
   supabase,
   babyId,
 }: {
-  supabase: SupabaseLike;
+  supabase: AppSupabaseClient;
   babyId: string;
 }): Promise<{ plan: UserPlan; premium: boolean }> {
   const { data, error } = await supabase.rpc("baby_has_premium", {
@@ -35,20 +31,15 @@ export async function getBabyMembership({
   babyId,
   userId,
 }: {
-  supabase: SupabaseLike;
+  supabase: AppSupabaseClient;
   babyId: string;
   userId: string;
 }): Promise<{ isOwner: boolean; isCaregiver: boolean }> {
-  const babyQuery = supabase.from("babies") as {
-    select: (columns: string) => {
-      eq: (
-        column: string,
-        value: unknown,
-      ) => { single: () => Promise<{ data: { owner_id: string } | null; error: { message: string } | null }> };
-    };
-  };
-
-  const { data: baby } = await babyQuery.select("owner_id").eq("id", babyId).single();
+  const { data: baby } = await supabase
+    .from("babies")
+    .select("owner_id")
+    .eq("id", babyId)
+    .single();
   if (!baby) {
     return { isOwner: false, isCaregiver: false };
   }
@@ -57,26 +48,8 @@ export async function getBabyMembership({
     return { isOwner: true, isCaregiver: false };
   }
 
-  const caregiverQuery = supabase.from("caregivers") as {
-    select: (columns: string) => {
-      eq: (
-        column: string,
-        value: unknown,
-      ) => {
-        eq: (
-          column: string,
-          value: unknown,
-        ) => {
-          eq: (
-            column: string,
-            value: unknown,
-          ) => { maybeSingle: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> };
-        };
-      };
-    };
-  };
-
-  const { data: caregiver } = await caregiverQuery
+  const { data: caregiver } = await supabase
+    .from("caregivers")
     .select("id")
     .eq("baby_id", babyId)
     .eq("user_id", userId)
@@ -91,7 +64,7 @@ export async function canWriteToBaby({
   babyId,
   userId,
 }: {
-  supabase: SupabaseLike;
+  supabase: AppSupabaseClient;
   babyId: string;
   userId?: string;
 }): Promise<boolean> {

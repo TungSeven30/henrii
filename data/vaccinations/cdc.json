@@ -1,0 +1,7 @@
+[
+  { "code": "hep_b_1", "name": "Hepatitis B (Dose 1)", "ageDays": 0 },
+  { "code": "dtap_1", "name": "DTaP (Dose 1)", "ageDays": 60 },
+  { "code": "hib_1", "name": "Hib (Dose 1)", "ageDays": 60 },
+  { "code": "pcv_1", "name": "PCV (Dose 1)", "ageDays": 60 },
+  { "code": "mmr_1", "name": "MMR (Dose 1)", "ageDays": 365 }
+]

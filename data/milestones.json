@@ -1,0 +1,112 @@
+[
+  {
+    "key": "motor.roll_over",
+    "category": "motor",
+    "name_en": "Rolls over",
+    "name_vi": "Lat nguoi",
+    "description_en": "Baby can roll from tummy to back or back to tummy.",
+    "description_vi": "Be co the lat tu sap sang ngua hoac nguoc lai.",
+    "typical_age_min_months": 3,
+    "typical_age_max_months": 5,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "motor.sit_without_support",
+    "category": "motor",
+    "name_en": "Sits without support",
+    "name_vi": "Ngoi khong can do",
+    "description_en": "Baby can sit for short periods without support.",
+    "description_vi": "Be co the ngoi trong mot khoang ngan ma khong can giu.",
+    "typical_age_min_months": 5,
+    "typical_age_max_months": 8,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "motor.crawl",
+    "category": "motor",
+    "name_en": "Crawls",
+    "name_vi": "Bo",
+    "description_en": "Baby moves forward by crawling.",
+    "description_vi": "Be di chuyen ve phia truoc bang cach bo.",
+    "typical_age_min_months": 7,
+    "typical_age_max_months": 10,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "motor.walk_independent",
+    "category": "motor",
+    "name_en": "Walks independently",
+    "name_vi": "Tu di",
+    "description_en": "Baby can take independent steps.",
+    "description_vi": "Be co the tu di nhung buoc dau tien.",
+    "typical_age_min_months": 11,
+    "typical_age_max_months": 15,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "language.cooing",
+    "category": "language",
+    "name_en": "Coos and gurgles",
+    "name_vi": "Keu e a",
+    "description_en": "Baby makes vowel-like cooing sounds.",
+    "description_vi": "Be phat ra am thanh e a giong nguyen am.",
+    "typical_age_min_months": 2,
+    "typical_age_max_months": 4,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "language.babbling",
+    "category": "language",
+    "name_en": "Babbles",
+    "name_vi": "Bi bo",
+    "description_en": "Baby repeats syllable-like sounds such as ba-ba.",
+    "description_vi": "Be lap lai am tiet giong ba-ba ma-ma.",
+    "typical_age_min_months": 4,
+    "typical_age_max_months": 8,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "language.first_word",
+    "category": "language",
+    "name_en": "Says first words",
+    "name_vi": "Noi tu dau tien",
+    "description_en": "Baby says simple meaningful words.",
+    "description_vi": "Be noi duoc nhung tu don gian co y nghia.",
+    "typical_age_min_months": 10,
+    "typical_age_max_months": 15,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "social.social_smile",
+    "category": "social",
+    "name_en": "Social smile",
+    "name_vi": "Cuoi giao tiep",
+    "description_en": "Baby smiles responsively at familiar faces.",
+    "description_vi": "Be cuoi dap lai khi thay nguoi than quen.",
+    "typical_age_min_months": 1,
+    "typical_age_max_months": 3,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "social.responds_to_name",
+    "category": "social",
+    "name_en": "Responds to name",
+    "name_vi": "Phan ung khi goi ten",
+    "description_en": "Baby turns or reacts when called by name.",
+    "description_vi": "Be quay lai hoac phan ung khi duoc goi ten.",
+    "typical_age_min_months": 6,
+    "typical_age_max_months": 10,
+    "source": "WHO/CDC"
+  },
+  {
+    "key": "cognitive.object_permanence",
+    "category": "cognitive",
+    "name_en": "Object permanence",
+    "name_vi": "Nhan thuc vat ton tai",
+    "description_en": "Baby searches for objects that are hidden.",
+    "description_vi": "Be tim vat da bi che khuat.",
+    "typical_age_min_months": 6,
+    "typical_age_max_months": 10,
+    "source": "WHO/CDC"
+  }
+]

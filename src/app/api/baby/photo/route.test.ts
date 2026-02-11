@@ -23,7 +23,7 @@ function createMockFile(
   bytes: Uint8Array,
   type?: string
 ): File {
-  const blob = new Blob([bytes], { type: type || "application/octet-stream" });
+  const blob = new Blob([bytes.buffer], { type: type || "application/octet-stream" });
   return new File([blob], name, { type: type || "application/octet-stream" });
 }
 

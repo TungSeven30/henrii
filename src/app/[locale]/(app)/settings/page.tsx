@@ -45,12 +45,11 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
                 id: baby.id,
                 name: baby.name,
                 date_of_birth: baby.date_of_birth,
-                sex: baby.sex ?? baby.gender ?? null,
-                gender: baby.gender ?? baby.sex ?? null,
+                sex: baby.sex ?? null,
                 country_code: baby.country_code,
                 timezone: baby.timezone,
                 owner_id: baby.owner_id,
-                photo_url: null,
+                photo_url: (baby as { photo_url?: string | null }).photo_url ?? null,
               }
             : null
         }

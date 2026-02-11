@@ -13,6 +13,12 @@ export async function populateVaccinesAction(
   }
 
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "Unauthorized" };
+  }
   const schedule = await buildVaccinationDueRows(countryCode, dateOfBirth);
 
   if (!schedule.length) {
@@ -21,15 +27,17 @@ export async function populateVaccinesAction(
 
   const rows = schedule.map((item) => ({
     baby_id: babyId,
+    logged_by: user.id,
+    client_uuid: crypto.randomUUID(),
     vaccine_code: item.vaccine_code,
     vaccine_name: item.vaccine_name,
     due_date: item.due_date,
-    status: "pending",
+    status: "pending" as const,
   }));
 
   const { error } = await supabase
     .from("vaccinations")
-    .upsert(rows, { onConflict: "baby_id,vaccine_name,due_date", ignoreDuplicates: true });
+    .upsert(rows, { onConflict: "baby_id,vaccine_code,due_date", ignoreDuplicates: true });
 
   if (error) {
     return { ok: false, error: error.message };

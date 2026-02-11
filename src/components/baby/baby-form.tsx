@@ -8,8 +8,6 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { useUIStore } from "@/stores/ui-store";
-import { displayToGrams, displayToCm } from "@/lib/units";
 import { useBabyStore } from "@/stores/baby-store";
 import { useRouter } from "@/i18n/navigation";
 import { populateVaccinesAction } from "@/app/actions/populate-vaccines";
@@ -78,9 +76,7 @@ const COMMON_TIMEZONES = [
 const babyFormSchema = z.object({
   name: z.string().min(1, "Required"),
   date_of_birth: z.string().min(1, "Required"),
-  gender: z.string().optional(),
-  birth_weight_grams: z.string().optional(),
-  birth_length_cm: z.string().optional(),
+  sex: z.string().optional(),
   country_code: z.string().min(1, "Required"),
   timezone: z.string().min(1, "Required"),
 });
@@ -97,29 +93,9 @@ export function BabyForm({ baby }: BabyFormProps) {
   const tBaby = useTranslations("baby");
   const router = useRouter();
   const setActiveBaby = useBabyStore((s) => s.setActiveBaby);
-  const unitSystem = useUIStore((s) => s.unitSystem);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const photoRef = useRef<PhotoUploadHandle>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(baby?.photo_url ?? null);
-
-  const isImperial = unitSystem === "imperial";
-  const weightUnit = isImperial ? "lb" : "g";
-  const lengthUnit = isImperial ? "in" : "cm";
-  const weightExample = isImperial ? "7.5" : "3200";
-  const lengthExample = isImperial ? "19.7" : "50";
-
-  // Convert existing DB values (grams / cm) to display units for default form values
-  function gramsToFormDefault(grams: number | null | undefined): string {
-    if (grams === null || grams === undefined) return "";
-    if (isImperial) return (grams / 453.592).toFixed(1);
-    return grams.toString();
-  }
-
-  function cmToFormDefault(cm: number | null | undefined): string {
-    if (cm === null || cm === undefined) return "";
-    if (isImperial) return (cm / 2.54).toFixed(1);
-    return cm.toString();
-  }
 
   const detectedTimezone =
     typeof Intl !== "undefined"
@@ -131,9 +107,7 @@ export function BabyForm({ baby }: BabyFormProps) {
     defaultValues: {
       name: baby?.name ?? "",
       date_of_birth: baby?.date_of_birth ?? "",
-      gender: baby?.gender ?? undefined,
-      birth_weight_grams: gramsToFormDefault(baby?.birth_weight_grams),
-      birth_length_cm: cmToFormDefault(baby?.birth_length_cm),
+      sex: baby?.sex ?? undefined,
       country_code: baby?.country_code ?? "",
       timezone: baby?.timezone ?? detectedTimezone,
     },
@@ -159,29 +133,10 @@ export function BabyForm({ baby }: BabyFormProps) {
         return;
       }
 
-      const weightInput = values.birth_weight_grams
-        ? Number(values.birth_weight_grams)
-        : null;
-      const lengthInput = values.birth_length_cm
-        ? Number(values.birth_length_cm)
-        : null;
-
-      // Convert from display units back to metric for DB storage
-      const weightGrams =
-        weightInput !== null && !Number.isNaN(weightInput)
-          ? Math.round(displayToGrams(weightInput, isImperial ? "lb" : "g"))
-          : null;
-      const lengthCm =
-        lengthInput !== null && !Number.isNaN(lengthInput)
-          ? Math.round(displayToCm(lengthInput, unitSystem) * 10) / 10
-          : null;
-
       const payload = {
         name: values.name,
         date_of_birth: values.date_of_birth,
-        gender: values.gender || null,
-        birth_weight_grams: weightGrams,
-        birth_length_cm: lengthCm,
+        sex: values.sex || "unknown",
         country_code: values.country_code,
         timezone: values.timezone,
         photo_url: photoUrl,
@@ -201,7 +156,7 @@ export function BabyForm({ baby }: BabyFormProps) {
           id: data.id,
           name: data.name,
           date_of_birth: data.date_of_birth,
-          gender: data.gender,
+          sex: data.sex,
           country_code: data.country_code,
           timezone: data.timezone,
           photo_url: data.photo_url,
@@ -234,7 +189,7 @@ export function BabyForm({ baby }: BabyFormProps) {
           id: data.id,
           name: data.name,
           date_of_birth: data.date_of_birth,
-          gender: data.gender,
+          sex: data.sex,
           country_code: data.country_code,
           timezone: data.timezone,
           photo_url: newPhotoUrl,
@@ -312,7 +267,7 @@ export function BabyForm({ baby }: BabyFormProps) {
 
         <FormField
           control={form.control}
-          name="gender"
+          name="sex"
           render={({ field }) => (
             <FormItem>
               <FormLabel>
@@ -328,10 +283,10 @@ export function BabyForm({ baby }: BabyFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="boy">{t("genderBoy")}</SelectItem>
-                  <SelectItem value="girl">{t("genderGirl")}</SelectItem>
+                  <SelectItem value="male">{t("genderBoy")}</SelectItem>
+                  <SelectItem value="female">{t("genderGirl")}</SelectItem>
                   <SelectItem value="other">{t("genderOther")}</SelectItem>
-                  <SelectItem value="prefer_not_to_say">
+                  <SelectItem value="unknown">
                     {t("genderPreferNot")}
                   </SelectItem>
                 </SelectContent>
@@ -340,58 +295,6 @@ export function BabyForm({ baby }: BabyFormProps) {
             </FormItem>
           )}
         />
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="birth_weight_grams"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  {t("birthWeight", { unit: weightUnit })}{" "}
-                  <span className="text-muted-foreground font-normal">
-                    ({tCommon("optional")})
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    inputMode="decimal"
-                    step={isImperial ? "0.1" : "1"}
-                    placeholder={t("birthWeightPlaceholder", { example: weightExample })}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="birth_length_cm"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  {t("birthLength", { unit: lengthUnit })}{" "}
-                  <span className="text-muted-foreground font-normal">
-                    ({tCommon("optional")})
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    inputMode="decimal"
-                    step="0.1"
-                    placeholder={t("birthLengthPlaceholder", { example: lengthExample })}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
 
         <FormField
           control={form.control}

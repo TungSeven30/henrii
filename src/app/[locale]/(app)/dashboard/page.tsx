@@ -171,7 +171,7 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
       id: `feeding-${item.id}`,
       type: "feeding" as const,
       happenedAt: item.started_at,
-      summary: `${t("types.feeding")} · ${(item as { feeding_type?: string; type?: string }).feeding_type ?? (item as { type?: string }).type ?? "bottle"}${item.amount_ml ? ` · ${item.amount_ml}ml` : ""}`,
+      summary: `${t("types.feeding")} · ${item.feeding_type ?? "bottle"}${item.amount_ml ? ` · ${item.amount_ml}ml` : ""}`,
     })),
     ...(timelineSleep.data ?? []).map((item) => ({
       id: `sleep-${item.id}`,
@@ -183,7 +183,7 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
       id: `diaper-${item.id}`,
       type: "diaper" as const,
       happenedAt: item.changed_at,
-      summary: `${t("types.diaper")} · ${(item as { change_type?: string; type?: string }).change_type ?? (item as { type?: string }).type ?? "wet"}`,
+      summary: `${t("types.diaper")} · ${item.change_type ?? "wet"}`,
     })),
   ].sort((a, b) => new Date(b.happenedAt).getTime() - new Date(a.happenedAt).getTime());
 
@@ -195,7 +195,7 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
       baby_id: row.baby_id,
       started_at: row.started_at,
       ended_at: null,
-      type: (row as { feeding_type?: string; type?: string }).feeding_type ?? row.type ?? "bottle",
+      type: row.feeding_type ?? "bottle",
       amount_ml: row.amount_ml,
     })),
     sleepSessions: (recentSleep.data ?? []).map((row) => ({
@@ -209,7 +209,7 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
       id: row.id,
       baby_id: row.baby_id,
       changed_at: row.changed_at,
-      type: (row as { change_type?: string; type?: string }).change_type ?? row.type ?? "wet",
+      type: row.change_type ?? "wet",
       color: null,
       consistency: null,
     })),
@@ -235,8 +235,7 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
 
   const insights = generateInsights(babyAgeMonths, dailySummaries, latestGrowth.data ?? null);
   const initialView = query.view === "timeline" ? "timeline" : "dashboard";
-  const normalizedSex = baby.sex ?? baby.gender ?? null;
-  const normalizedGender = baby.gender ?? baby.sex ?? null;
+  const normalizedSex = baby.sex ?? null;
 
   const lastFeedData = lastFeedResult.data
     ? {
@@ -282,11 +281,10 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
           name: baby.name,
           date_of_birth: baby.date_of_birth,
           sex: normalizedSex,
-          gender: normalizedGender,
           country_code: baby.country_code,
           timezone: baby.timezone,
           owner_id: baby.owner_id,
-          photo_url: null,
+          photo_url: (baby as { photo_url?: string | null }).photo_url ?? null,
         }}
       />
       <h1 className="henrii-title">{t("title")}</h1>
@@ -296,11 +294,10 @@ export default async function DashboardPage({ params, searchParams }: DashboardP
           name: baby.name,
           date_of_birth: baby.date_of_birth,
           sex: normalizedSex,
-          gender: normalizedGender,
           country_code: baby.country_code,
           timezone: baby.timezone,
           owner_id: baby.owner_id,
-          photo_url: null,
+          photo_url: (baby as { photo_url?: string | null }).photo_url ?? null,
         }}
         todayCounts={{
           feeds: feedCount ?? 0,

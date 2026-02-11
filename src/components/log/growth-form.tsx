@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { logEvent } from "@/lib/log-event";
 import { incrementEventCount } from "@/lib/event-counter";
 import { useBabyStore } from "@/stores/baby-store";
-import { useUIStore } from "@/stores/ui-store";
+import { useUiStore } from "@/stores/ui-store";
 import { displayToGrams, displayToCm } from "@/lib/units";
 import {
   Sheet,
@@ -30,8 +31,9 @@ export function GrowthForm({ open, onOpenChange }: GrowthFormProps) {
   const t = useTranslations("growth");
   const tCommon = useTranslations("common");
   const tSync = useTranslations("sync");
+  const router = useRouter();
   const activeBaby = useBabyStore((s) => s.activeBaby);
-  const unitSystem = useUIStore((s) => s.unitSystem);
+  const unitSystem = useUiStore((s) => s.unitSystem);
 
   const isImperial = unitSystem === "imperial";
   const wUnit = isImperial ? "lb" : "g";
@@ -59,7 +61,10 @@ export function GrowthForm({ open, onOpenChange }: GrowthFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!activeBaby) return;
+    if (!activeBaby) {
+      toast.error(tCommon("activeBabyRequired"));
+      return;
+    }
 
     const weightRaw = weightInput ? parseFloat(weightInput) : null;
     const lengthRaw = lengthInput ? parseFloat(lengthInput) : null;
@@ -76,6 +81,10 @@ export function GrowthForm({ open, onOpenChange }: GrowthFormProps) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error(tCommon("signInRequired"));
+        return;
+      }
 
       // Convert display units to metric for DB storage
       const weightGrams =
@@ -93,7 +102,7 @@ export function GrowthForm({ open, onOpenChange }: GrowthFormProps) {
 
       const payload: Record<string, unknown> = {
         baby_id: activeBaby.id,
-        logged_by: user?.id ?? null,
+        logged_by: user.id,
         measured_at: measuredAt,
         notes: notes || null,
       };
@@ -111,7 +120,7 @@ export function GrowthForm({ open, onOpenChange }: GrowthFormProps) {
 
       // Compute percentiles if baby DOB and sex are available
       const dob = activeBaby.date_of_birth;
-      const sex = activeBaby.gender === "female" ? "female" : "male";
+      const sex = activeBaby.sex === "female" ? "female" : "male";
       const ageDays = Math.floor(
         (new Date(measuredAt).getTime() - new Date(dob).getTime()) /
           (1000 * 60 * 60 * 24),
@@ -163,6 +172,11 @@ export function GrowthForm({ open, onOpenChange }: GrowthFormProps) {
         payload,
       });
 
+      if (!result.success) {
+        toast.error(result.error ?? tCommon("saveFailed"));
+        return;
+      }
+
       if (result.offline) {
         toast(tSync("pending"));
       } else {
@@ -172,6 +186,9 @@ export function GrowthForm({ open, onOpenChange }: GrowthFormProps) {
       incrementEventCount();
       resetForm();
       onOpenChange(false);
+      router.refresh();
+    } catch {
+      toast.error(tCommon("saveFailed"));
     } finally {
       setSubmitting(false);
     }

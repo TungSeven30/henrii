@@ -39,7 +39,8 @@ export async function GET() {
     .eq("id", user.id)
     .single();
 
-  if (!profile?.active_baby_id) {
+  const activeBabyId = profile?.active_baby_id;
+  if (!activeBabyId) {
     return NextResponse.json({ error: "No active baby selected" }, { status: 409 });
   }
 
@@ -47,7 +48,7 @@ export async function GET() {
     .from("notification_preferences")
     .select("event_type, email_enabled, push_enabled, threshold_minutes")
     .eq("user_id", user.id)
-    .eq("baby_id", profile.active_baby_id);
+    .eq("baby_id", activeBabyId);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
@@ -98,13 +99,14 @@ export async function PUT(request: Request) {
     .eq("id", user.id)
     .single();
 
-  if (!profile?.active_baby_id) {
+  const activeBabyId = profile?.active_baby_id;
+  if (!activeBabyId) {
     return NextResponse.json({ error: "No active baby selected" }, { status: 409 });
   }
 
   const rows = patches.map((patch) => ({
     user_id: user.id,
-    baby_id: profile.active_baby_id,
+    baby_id: activeBabyId,
     event_type: patch.eventType,
     email_enabled: Boolean(patch.emailEnabled),
     push_enabled: Boolean(patch.pushEnabled),

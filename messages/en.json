@@ -17,7 +17,14 @@
     "or": "or",
     "yes": "Yes",
     "no": "No",
+<<<<<<< HEAD
     "language": "Language"
+=======
+    "language": "Language",
+    "saveFailed": "Unable to save right now. Please try again.",
+    "activeBabyRequired": "Please select or create a baby profile first.",
+    "signInRequired": "Your session expired. Please sign in again."
+>>>>>>> security-audit-2026-02-11
   },
   "auth": {
     "login": "Log in",

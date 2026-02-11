@@ -2,9 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
+<<<<<<< HEAD
 import { toast } from "sonner";
 import { Play, Square, Clock, Timer } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+=======
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Play, Square, Clock, Timer } from "lucide-react";
+>>>>>>> security-audit-2026-02-11
 import { logEvent } from "@/lib/log-event";
 import { incrementEventCount } from "@/lib/event-counter";
 import { useBabyStore } from "@/stores/baby-store";
@@ -89,13 +95,25 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
   const tCommon = useTranslations("common");
   const tSync = useTranslations("sync");
   const tTimeline = useTranslations("timeline");
+<<<<<<< HEAD
   const activeBaby = useBabyStore((s) => s.activeBaby);
   const { startTimer, stopTimer, getTimersByBaby } = useTimerStore();
+=======
+  const router = useRouter();
+  const activeBaby = useBabyStore((s) => s.activeBaby);
+  const activeTimers = useTimerStore((state) => state.activeTimers);
+  const startTimer = useTimerStore((state) => state.startTimer);
+  const stopTimer = useTimerStore((state) => state.stopTimer);
+>>>>>>> security-audit-2026-02-11
 
   const isEditMode = !!initialData?.id;
 
   const activeSleepTimer = activeBaby
+<<<<<<< HEAD
     ? getTimersByBaby(activeBaby.id).find((timer) => timer.type === "sleep")
+=======
+    ? activeTimers.find((timer) => timer.babyId === activeBaby.id && timer.type === "sleep")
+>>>>>>> security-audit-2026-02-11
     : undefined;
 
   const [mode, setMode] = useState<Mode>(initialData ? "manual" : "timer");
@@ -131,7 +149,14 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
   }, []);
 
   function handleStartTimer() {
+<<<<<<< HEAD
     if (!activeBaby) return;
+=======
+    if (!activeBaby) {
+      toast.error(tCommon("activeBabyRequired"));
+      return;
+    }
+>>>>>>> security-audit-2026-02-11
     startTimer({
       type: "sleep",
       startedAt: new Date().toISOString(),
@@ -146,11 +171,14 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
 
     setSubmitting(true);
     try {
+<<<<<<< HEAD
       const supabase = createClient();
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
+=======
+>>>>>>> security-audit-2026-02-11
       const stoppedTimer = stopTimer(activeSleepTimer.id);
       if (!stoppedTimer) return;
 
@@ -162,7 +190,11 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
         tableName: "sleep_sessions",
         payload: {
           baby_id: activeBaby.id,
+<<<<<<< HEAD
           logged_by: user?.id ?? null,
+=======
+          logged_by: null,
+>>>>>>> security-audit-2026-02-11
           started_at: stoppedTimer.startedAt,
           ended_at: new Date(endedAtMs).toISOString(),
           duration_minutes: durationMinutes,
@@ -171,6 +203,14 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
         },
       });
 
+<<<<<<< HEAD
+=======
+      if (!result.success) {
+        toast.error(result.error ?? tCommon("saveFailed"));
+        return;
+      }
+
+>>>>>>> security-audit-2026-02-11
       if (result.offline) {
         toast(tSync("pending"));
       } else {
@@ -180,6 +220,10 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
       incrementEventCount();
       resetForm();
       onOpenChange(false);
+<<<<<<< HEAD
+=======
+      router.refresh();
+>>>>>>> security-audit-2026-02-11
     } finally {
       setSubmitting(false);
     }
@@ -191,11 +235,14 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
 
     setSubmitting(true);
     try {
+<<<<<<< HEAD
       const supabase = createClient();
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
+=======
+>>>>>>> security-audit-2026-02-11
       const startMs = new Date(startTime).getTime();
       const endMs = new Date(endTime).getTime();
       const durationMinutes = Math.round((endMs - startMs) / 60_000);
@@ -204,7 +251,11 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
 
       const payload = {
         baby_id: activeBaby.id,
+<<<<<<< HEAD
         logged_by: user?.id ?? null,
+=======
+        logged_by: null,
+>>>>>>> security-audit-2026-02-11
         started_at: new Date(startTime).toISOString(),
         ended_at: new Date(endTime).toISOString(),
         duration_minutes: durationMinutes,
@@ -213,6 +264,7 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
       };
 
       if (isEditMode && initialData?.id) {
+<<<<<<< HEAD
         const updatePayload = {
           started_at: new Date(startTime).toISOString(),
           ended_at: new Date(endTime).toISOString(),
@@ -230,18 +282,62 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
         }
         toast.success(tTimeline("updated"));
         onUpdated?.();
+=======
+        const response = await fetch("/api/events/mutate", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            table: "sleep_sessions",
+            operation: "update",
+            id: initialData.id,
+            expectedUpdatedAt: null,
+            patch: {
+              started_at: new Date(startTime).toISOString(),
+              ended_at: new Date(endTime).toISOString(),
+              duration_minutes: durationMinutes,
+              notes: notes || null,
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          const data = (await response.json().catch(() => null)) as
+            | { error?: unknown }
+            | null;
+          toast.error(
+            data && typeof data.error === "string" ? data.error : tTimeline("updateError"),
+          );
+          return;
+        }
+
+        toast.success(tTimeline("updated"));
+        onUpdated?.();
+        router.refresh();
+>>>>>>> security-audit-2026-02-11
       } else {
         const result = await logEvent({
           tableName: "sleep_sessions",
           payload,
         });
 
+<<<<<<< HEAD
+=======
+        if (!result.success) {
+          toast.error(result.error ?? tCommon("saveFailed"));
+          return;
+        }
+
+>>>>>>> security-audit-2026-02-11
         if (result.offline) {
           toast(tSync("pending"));
         } else {
           toast.success(t("logged"));
         }
         incrementEventCount();
+<<<<<<< HEAD
+=======
+        router.refresh();
+>>>>>>> security-audit-2026-02-11
       }
 
       if (!isEditMode) resetForm();
@@ -318,10 +414,17 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
                 type="button"
                 onClick={() => setMode("timer")}
                 className={cn(
+<<<<<<< HEAD
                   "flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors",
                   mode === "timer"
                     ? "bg-henrii-blue/20 text-henrii-blue"
                     : "bg-muted text-muted-foreground",
+=======
+                  "flex-1 flex items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-colors",
+                  mode === "timer"
+                    ? "border-henrii-blue/40 bg-henrii-blue/20 text-henrii-blue"
+                    : "border-border/70 bg-background text-foreground hover:bg-accent",
+>>>>>>> security-audit-2026-02-11
                 )}
               >
                 <Timer className="size-4" />
@@ -331,10 +434,17 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
                 type="button"
                 onClick={() => setMode("manual")}
                 className={cn(
+<<<<<<< HEAD
                   "flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors",
                   mode === "manual"
                     ? "bg-henrii-blue/20 text-henrii-blue"
                     : "bg-muted text-muted-foreground",
+=======
+                  "flex-1 flex items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-colors",
+                  mode === "manual"
+                    ? "border-henrii-blue/40 bg-henrii-blue/20 text-henrii-blue"
+                    : "border-border/70 bg-background text-foreground hover:bg-accent",
+>>>>>>> security-audit-2026-02-11
                 )}
               >
                 <Clock className="size-4" />
@@ -375,7 +485,12 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
                   <Button
                     type="button"
                     size="lg"
+<<<<<<< HEAD
                     className="h-14 w-full text-base bg-henrii-blue text-white hover:bg-henrii-blue/90"
+=======
+                    disabled={submitting || !activeBaby}
+                    className="h-14 w-full text-base"
+>>>>>>> security-audit-2026-02-11
                     onClick={handleStartTimer}
                   >
                     <Play className="size-5" />

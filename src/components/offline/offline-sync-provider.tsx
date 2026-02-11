@@ -7,14 +7,49 @@ import { useOfflineStore } from "@/stores/offline-store";
 
 const SYNC_INTERVAL_MS = 15000;
 const NON_RETRYABLE_STATUSES = new Set([400, 403, 404, 409, 410, 422]);
+const MAX_RETRIES = 5;
+const RETRY_BASE_DELAY_MS = 2_000;
+const RETRY_MAX_DELAY_MS = 60_000;
+
+type SyncRequestPayload = {
+  endpoint: "/api/events/log" | "/api/events/mutate";
+  body: unknown;
+};
+
+function resolveSyncPayload(rawPayload: unknown): SyncRequestPayload {
+  if (!rawPayload || typeof rawPayload !== "object") {
+    return {
+      endpoint: "/api/events/log",
+      body: rawPayload,
+    };
+  }
+
+  const payload = rawPayload as Record<string, unknown>;
+  const kindEndpoint =
+    payload.kind === "mutate"
+      ? "/api/events/mutate"
+      : payload.kind === "log"
+        ? "/api/events/log"
+        : null;
+  const explicitEndpoint =
+    payload.endpoint === "/api/events/mutate" || payload.endpoint === "/api/events/log"
+      ? payload.endpoint
+      : null;
+
+  return {
+    endpoint: kindEndpoint ?? explicitEndpoint ?? "/api/events/log",
+    body: "body" in payload ? payload.body : rawPayload,
+  };
+}
 
 export function OfflineSyncProvider() {
   const router = useRouter();
   const inFlight = useRef(false);
   const lastRefreshAt = useRef(0);
+  const retryState = useRef(new Map<string, { count: number; nextRetryAt: number }>());
   const setPendingCount = useOfflineStore((state) => state.setPendingCount);
   const setSyncing = useOfflineStore((state) => state.setSyncing);
-  const setIsOnline = useOfflineStore((state) => state.setIsOnline);
+  const setOnline = useOfflineStore((state) => state.setOnline);
 
   const refreshPendingCount = useCallback(async () => {
     try {
@@ -55,13 +90,16 @@ export function OfflineSyncProvider() {
       let syncedAnyEvent = false;
 
       for (const event of queuedEvents) {
-        const payload =
-          "endpoint" in (event.payload as Record<string, unknown>)
-            ? event.payload
-            : ({
-                endpoint: "/api/events/log",
-                body: event.payload,
-              } as const);
+        const currentRetry = retryState.current.get(event.id) ?? { count: 0, nextRetryAt: 0 };
+        if (currentRetry.count >= MAX_RETRIES) {
+          continue;
+        }
+
+        if (Date.now() < currentRetry.nextRetryAt) {
+          continue;
+        }
+
+        const payload = resolveSyncPayload(event.payload);
 
         const response = await fetch(payload.endpoint, {
           method: "POST",
@@ -71,41 +109,58 @@ export function OfflineSyncProvider() {
           body: JSON.stringify(payload.body),
         }).catch(() => null);
 
-        if (!response) {
+        if (!response || response.status >= 500 || response.status === 429) {
+          const nextCount = currentRetry.count + 1;
+          const delay = Math.min(RETRY_MAX_DELAY_MS, RETRY_BASE_DELAY_MS * 2 ** (nextCount - 1));
+          retryState.current.set(event.id, {
+            count: nextCount,
+            nextRetryAt: Date.now() + delay,
+          });
           continue;
         }
 
         if (!response.ok) {
           if (NON_RETRYABLE_STATUSES.has(response.status)) {
             await removeQueuedEvent(event.id);
+            retryState.current.delete(event.id);
             syncedAnyEvent = true;
+            continue;
           }
+
+          const nextCount = currentRetry.count + 1;
+          const delay = Math.min(RETRY_MAX_DELAY_MS, RETRY_BASE_DELAY_MS * 2 ** (nextCount - 1));
+          retryState.current.set(event.id, {
+            count: nextCount,
+            nextRetryAt: Date.now() + delay,
+          });
           continue;
         }
 
         await removeQueuedEvent(event.id);
+        retryState.current.delete(event.id);
         syncedAnyEvent = true;
       }
 
       await refreshPendingCount();
       if (syncedAnyEvent) {
-        router.refresh();
+        refreshServerData();
       }
     } finally {
       setSyncing(false);
       inFlight.current = false;
     }
-  }, [refreshPendingCount, router, setSyncing]);
+  }, [refreshPendingCount, refreshServerData, setSyncing]);
 
   useEffect(() => {
     const handleOnline = () => {
-      setIsOnline(true);
+      retryState.current.clear();
+      setOnline(true);
       void syncNow();
       refreshServerData(true);
     };
 
     const handleOffline = () => {
-      setIsOnline(false);
+      setOnline(false);
     };
 
     const handleVisibilityChange = () => {
@@ -120,7 +175,7 @@ export function OfflineSyncProvider() {
       refreshServerData(true);
     };
 
-    setIsOnline(typeof navigator === "undefined" ? true : navigator.onLine);
+    setOnline(typeof navigator === "undefined" ? true : navigator.onLine);
     void refreshPendingCount();
     void syncNow();
 
@@ -142,7 +197,7 @@ export function OfflineSyncProvider() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.clearInterval(timer);
     };
-  }, [refreshPendingCount, refreshServerData, setIsOnline, syncNow]);
+  }, [refreshPendingCount, refreshServerData, setOnline, syncNow]);
 
   return null;
 }

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { displayDiaperType, normalizeDiaperType } from "@/lib/events/parse";
 import { logEvent } from "@/lib/log-event";
 import { incrementEventCount } from "@/lib/event-counter";
 import { useBabyStore } from "@/stores/baby-store";
@@ -64,15 +65,14 @@ export function DiaperForm({ open, onOpenChange, initialData, onUpdated }: Diape
   const tCommon = useTranslations("common");
   const tSync = useTranslations("sync");
   const tTimeline = useTranslations("timeline");
+  const router = useRouter();
   const activeBaby = useBabyStore((s) => s.activeBaby);
 
   const isEditMode = !!initialData?.id;
 
-  const [type, setType] = useState<DiaperType>(() => {
-    if (initialData?.type === "dirty") return "dirty";
-    if (initialData?.type === "both" || initialData?.type === "mixed") return "both";
-    return "wet";
-  });
+  const [type, setType] = useState<DiaperType>(() =>
+    initialData?.type ? displayDiaperType(initialData.type) : "wet",
+  );
   const [color, setColor] = useState<DiaperColor | null>(
     (initialData?.color as DiaperColor | null) ?? null,
   );
@@ -97,19 +97,23 @@ export function DiaperForm({ open, onOpenChange, initialData, onUpdated }: Diape
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!activeBaby) return;
+    if (!activeBaby) {
+      toast.error(tCommon("activeBabyRequired"));
+      return;
+    }
 
     setSubmitting(true);
     try {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const changedAtDate = new Date(changedAt);
+      if (Number.isNaN(changedAtDate.getTime())) {
+        toast.error(tCommon("saveFailed"));
+        return;
+      }
 
       const payload = {
         baby_id: activeBaby.id,
-        logged_by: user?.id ?? null,
-        changed_at: new Date(changedAt).toISOString(),
+        logged_by: null,
+        changed_at: changedAtDate.toISOString(),
         type,
         color: showDirtyFields && color ? color : null,
         consistency: showDirtyFields && consistency ? consistency : null,
@@ -117,28 +121,46 @@ export function DiaperForm({ open, onOpenChange, initialData, onUpdated }: Diape
       };
 
       if (isEditMode && initialData?.id) {
-        const mappedType = type === "both" ? "mixed" : type;
-        const updatePayload = {
-          change_type: mappedType,
-          changed_at: new Date(changedAt).toISOString(),
-          notes: notes || null,
-        };
-        const { error } = await supabase
-          .from("diaper_changes")
-          .update(updatePayload)
-          .eq("id", initialData.id);
+        const mappedType = normalizeDiaperType(type);
+        const response = await fetch("/api/events/mutate", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            table: "diaper_changes",
+            operation: "update",
+            id: initialData.id,
+            expectedUpdatedAt: null,
+            patch: {
+              change_type: mappedType,
+              changed_at: changedAtDate.toISOString(),
+              notes: notes || null,
+            },
+          }),
+        });
 
-        if (error) {
-          toast.error(tTimeline("updateError"));
+        if (!response.ok) {
+          const data = (await response.json().catch(() => null)) as
+            | { error?: unknown }
+            | null;
+          toast.error(
+            data && typeof data.error === "string" ? data.error : tTimeline("updateError"),
+          );
           return;
         }
+
         toast.success(tTimeline("updated"));
         onUpdated?.();
+        router.refresh();
       } else {
         const result = await logEvent({
           tableName: "diaper_changes",
           payload,
         });
+
+        if (!result.success) {
+          toast.error(result.error ?? tCommon("saveFailed"));
+          return;
+        }
 
         if (result.offline) {
           toast(tSync("pending"));
@@ -146,10 +168,17 @@ export function DiaperForm({ open, onOpenChange, initialData, onUpdated }: Diape
           toast.success(t("logged"));
         }
         incrementEventCount();
+        router.refresh();
       }
 
       if (!isEditMode) resetForm();
       onOpenChange(false);
+    } catch (error) {
+      if (error instanceof Error && error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error(tCommon("saveFailed"));
+      }
     } finally {
       setSubmitting(false);
     }

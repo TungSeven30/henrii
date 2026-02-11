@@ -14,7 +14,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import type { Insight } from "@/lib/insights/generate-insights";
-import { useBabyStore, type Baby as BabyStoreItem } from "@/stores/baby-store";
+import { displayDiaperType } from "@/lib/events/parse";
 import { useUiStore } from "@/stores/ui-store";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,7 +34,6 @@ interface BabyData {
   name: string;
   date_of_birth: string;
   sex: string | null;
-  gender?: string | null;
   country_code: string;
   timezone: string;
   photo_url?: string | null;
@@ -110,12 +109,7 @@ function getQuickDiaperLabel(
   data: LastDiaperRecord,
   t: ReturnType<typeof useTranslations<"quickLog">>,
 ): string {
-  const key =
-    data.change_type === "mixed"
-      ? "both"
-      : data.change_type === "dirty"
-        ? "dirty"
-        : "wet";
+  const key = displayDiaperType(data.change_type);
   return t(key);
 }
 
@@ -144,7 +138,6 @@ export function DashboardContent({
   const t = useTranslations("dashboard");
   const tQuick = useTranslations("quickLog");
   const tInsights = useTranslations("insights");
-  const setActiveBaby = useBabyStore((state) => state.setActiveBaby);
   const activeView = useUiStore((state) => state.activeView);
   const setActiveView = useUiStore((state) => state.setActiveView);
 
@@ -153,16 +146,6 @@ export function DashboardContent({
   const [quickFeedOpen, setQuickFeedOpen] = useState(false);
   const [quickSleepOpen, setQuickSleepOpen] = useState(false);
   const [quickDiaperOpen, setQuickDiaperOpen] = useState(false);
-
-  useEffect(() => {
-    const hydratedBaby: BabyStoreItem = {
-      ...baby,
-      gender: baby.gender ?? baby.sex ?? null,
-      sex: baby.sex ?? baby.gender ?? null,
-      photo_url: baby.photo_url ?? null,
-    };
-    setActiveBaby(hydratedBaby);
-  }, [baby, setActiveBaby]);
 
   useEffect(() => {
     setActiveView(initialView);
@@ -268,12 +251,7 @@ export function DashboardContent({
   const diaperInitialData: DiaperInitialData | null = lastDiaperData
     ? {
         changed_at: new Date().toISOString(),
-        type:
-          lastDiaperData.change_type === "mixed"
-            ? "both"
-            : lastDiaperData.change_type === "dirty"
-              ? "dirty"
-              : "wet",
+        type: displayDiaperType(lastDiaperData.change_type),
         color: null,
         consistency: null,
         notes: lastDiaperData.notes,

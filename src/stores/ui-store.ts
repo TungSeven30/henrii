@@ -79,7 +79,6 @@ type UiStore = {
   isDarkMode: boolean;
   unitSystem: UnitSystem;
   fabOpen: boolean;
-  isFabOpen: boolean;
   setActiveView: (view: DashboardView) => void;
   setThemeSchedule: (schedule: ThemeSchedule) => void;
   setDarkModeSchedule: (schedule: DarkModeSchedule) => void;
@@ -102,7 +101,6 @@ export const useUiStore = create<UiStore>()(
       isDarkMode: false,
       unitSystem: "imperial",
       fabOpen: false,
-      isFabOpen: false,
       setActiveView: (activeView) => set({ activeView }),
       setThemeSchedule: (themeSchedule) => {
         const startHour = clampHour(themeSchedule.startHour);
@@ -152,13 +150,9 @@ export const useUiStore = create<UiStore>()(
         get().setIsDarkMode(isInDarkWindow(darkModeSchedule));
       },
       setUnitSystem: (unitSystem) => set({ unitSystem }),
-      setFabOpen: (fabOpen) => set({ fabOpen, isFabOpen: fabOpen }),
-      toggleFab: () =>
-        set((state) => ({
-          fabOpen: !state.fabOpen,
-          isFabOpen: !state.fabOpen,
-        })),
-      closeFab: () => set({ fabOpen: false, isFabOpen: false }),
+      setFabOpen: (fabOpen) => set({ fabOpen }),
+      toggleFab: () => set((state) => ({ fabOpen: !state.fabOpen })),
+      closeFab: () => set({ fabOpen: false }),
     }),
     {
       name: "henrii-ui-store",
@@ -172,5 +166,3 @@ export const useUiStore = create<UiStore>()(
     },
   ),
 );
-
-export const useUIStore = useUiStore;

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { useUIStore } from "@/stores/ui-store";
+import { useUiStore } from "@/stores/ui-store";
 
 export function useDarkMode() {
-  const { checkDarkMode, darkModeSchedule } = useUIStore();
+  const checkDarkMode = useUiStore((state) => state.checkDarkMode);
+  const darkModeSchedule = useUiStore((state) => state.darkModeSchedule);
 
   useEffect(() => {
     // Initial check

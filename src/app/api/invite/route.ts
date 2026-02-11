@@ -49,7 +49,7 @@ export async function POST(request: Request) {
   }
 
   const plan = await getUserPlan({
-    supabase: supabase as unknown as Parameters<typeof getUserPlan>[0]["supabase"],
+    supabase,
     userId: user.id,
   });
   if (!plan.premium) {
@@ -144,14 +144,11 @@ export async function POST(request: Request) {
     });
 
     if (sendResult.error) {
-      return NextResponse.json(
-        { error: sendResult.error.message, inviteLink },
-        { status: 502 },
-      );
+      return NextResponse.json({ ok: true, emailFailed: true });
     }
   }
 
-  return NextResponse.json({ ok: true, inviteLink });
+  return NextResponse.json({ ok: true });
 }
 
 export async function DELETE(request: Request) {

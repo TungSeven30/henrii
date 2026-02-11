@@ -33,8 +33,8 @@ export type EventMutatePayload = {
 };
 
 export type OfflineQueuePayload =
-  | { endpoint: "/api/events/log"; body: QuickLogPayload }
-  | { endpoint: "/api/events/mutate"; body: EventMutatePayload };
+  | { kind: "log"; endpoint: "/api/events/log"; body: QuickLogPayload }
+  | { kind: "mutate"; endpoint: "/api/events/mutate"; body: EventMutatePayload };
 
 export function getDefaultPayload(type: QuickLogPayload["type"]): QuickLogPayload {
   const now = new Date();

@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import type { UnitSystem } from "@/lib/units";
 import { useBabyStore } from "@/stores/baby-store";
-import { useUIStore } from "@/stores/ui-store";
+import { useUiStore } from "@/stores/ui-store";
 import { Link, useRouter } from "@/i18n/navigation";
 import { CaregiverManager } from "@/components/caregivers/caregiver-manager";
 import { NotificationPreferences } from "@/components/notifications/notification-preferences";
@@ -49,12 +49,12 @@ export function SettingsContent({ userEmail }: SettingsContentProps) {
   const locale = useLocale();
   const router = useRouter();
 
-  const darkModeSchedule = useUIStore((state) => state.darkModeSchedule);
-  const setDarkModeSchedule = useUIStore((state) => state.setDarkModeSchedule);
-  const darkModePreference = useUIStore((state) => state.darkModePreference);
-  const setDarkModePreference = useUIStore((state) => state.setDarkModePreference);
-  const unitSystem = useUIStore((state) => state.unitSystem);
-  const setUnitSystem = useUIStore((state) => state.setUnitSystem);
+  const darkModeSchedule = useUiStore((state) => state.darkModeSchedule);
+  const setDarkModeSchedule = useUiStore((state) => state.setDarkModeSchedule);
+  const darkModePreference = useUiStore((state) => state.darkModePreference);
+  const setDarkModePreference = useUiStore((state) => state.setDarkModePreference);
+  const unitSystem = useUiStore((state) => state.unitSystem);
+  const setUnitSystem = useUiStore((state) => state.setUnitSystem);
   const clearActiveBaby = useBabyStore((state) => state.clearActiveBaby);
 
   const [signingOut, setSigningOut] = useState(false);

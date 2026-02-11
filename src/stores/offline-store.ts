@@ -7,8 +7,6 @@ type OfflineStore = {
   setPendingCount: (count: number) => void;
   setSyncing: (syncing: boolean) => void;
   setOnline: (online: boolean) => void;
-  setSyncingState: (syncing: boolean) => void;
-  setIsOnline: (online: boolean) => void;
 };
 
 export const useOfflineStore = create<OfflineStore>((set) => ({
@@ -17,7 +15,5 @@ export const useOfflineStore = create<OfflineStore>((set) => ({
   isOnline: true,
   setPendingCount: (count) => set({ pendingCount: count }),
   setSyncing: (isSyncing) => set({ isSyncing }),
-  setSyncingState: (isSyncing) => set({ isSyncing }),
   setOnline: (isOnline) => set({ isOnline }),
-  setIsOnline: (isOnline) => set({ isOnline }),
 }));

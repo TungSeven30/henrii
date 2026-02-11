@@ -1,30 +1,47 @@
 import { NextResponse } from "next/server";
-import { canWriteToBaby } from "@/lib/billing/baby-plan";
+import {
+  isDiaperType,
+  isFeedingType,
+  parseIsoTimestamp,
+} from "@/lib/events/parse";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { DiaperType, FeedingType, QuickLogPayload } from "@/lib/events/types";
+import type { DiaperType, FeedingType } from "@/lib/events/types";
 
-function isFeedingType(value: string): value is FeedingType {
-  return value === "breast" || value === "bottle" || value === "solid";
-}
+type ParsedLogPayload =
+  | {
+      type: "feeding";
+      feedingType: FeedingType;
+      amountMl: number | null;
+      happenedAt: string;
+      notes: string | null;
+      clientUuid: string;
+    }
+  | {
+      type: "sleep";
+      minutes: number;
+      startedAt: string;
+      endedAt: string;
+      notes: string | null;
+      clientUuid: string;
+    }
+  | {
+      type: "diaper";
+      diaperType: DiaperType;
+      happenedAt: string;
+      notes: string | null;
+      clientUuid: string;
+    };
 
-function isDiaperType(value: string): value is DiaperType {
-  return value === "wet" || value === "dirty" || value === "mixed";
-}
-
-function parseIsoTimestamp(value: unknown): string | null {
+function parseOptionalNotes(value: unknown): string | null {
   if (typeof value !== "string") {
     return null;
   }
 
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed.toISOString();
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : null;
 }
 
-function parsePayload(rawBody: unknown): QuickLogPayload | null {
+function parsePayload(rawBody: unknown): ParsedLogPayload | null {
   if (!rawBody || typeof rawBody !== "object") {
     return null;
   }
@@ -51,6 +68,7 @@ function parsePayload(rawBody: unknown): QuickLogPayload | null {
       feedingType,
       amountMl,
       happenedAt,
+      notes: parseOptionalNotes(body.notes),
       clientUuid,
     };
   }
@@ -74,6 +92,7 @@ function parsePayload(rawBody: unknown): QuickLogPayload | null {
       minutes,
       startedAt,
       endedAt,
+      notes: parseOptionalNotes(body.notes),
       clientUuid,
     };
   }
@@ -89,6 +108,7 @@ function parsePayload(rawBody: unknown): QuickLogPayload | null {
       type: "diaper",
       diaperType,
       happenedAt,
+      notes: parseOptionalNotes(body.notes),
       clientUuid,
     };
   }
@@ -123,18 +143,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No active baby selected" }, { status: 409 });
   }
 
-  const canWrite = await canWriteToBaby({
-    supabase: supabase as unknown as Parameters<typeof canWriteToBaby>[0]["supabase"],
-    babyId: profile.active_baby_id,
-    userId: user.id,
-  });
-  if (!canWrite) {
-    return NextResponse.json(
-      { error: "Caregiver logging is read-only until premium is active for this baby." },
-      { status: 403 },
-    );
-  }
-
   if (payload.type === "feeding") {
     const { error } = await supabase.from("feedings").insert({
       baby_id: profile.active_baby_id,
@@ -142,10 +150,17 @@ export async function POST(request: Request) {
       feeding_type: payload.feedingType,
       amount_ml: payload.amountMl,
       started_at: payload.happenedAt,
+      notes: payload.notes,
       client_uuid: payload.clientUuid,
     });
 
     if (error) {
+      console.error("[events/log] feed insert failed", {
+        userId: user.id,
+        babyId: profile.active_baby_id,
+        code: error.code,
+        message: error.message,
+      });
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
   }
@@ -157,10 +172,17 @@ export async function POST(request: Request) {
       started_at: payload.startedAt,
       ended_at: payload.endedAt,
       duration_minutes: payload.minutes,
+      notes: payload.notes,
       client_uuid: payload.clientUuid,
     });
 
     if (error) {
+      console.error("[events/log] sleep insert failed", {
+        userId: user.id,
+        babyId: profile.active_baby_id,
+        code: error.code,
+        message: error.message,
+      });
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
   }
@@ -171,10 +193,17 @@ export async function POST(request: Request) {
       logged_by: user.id,
       change_type: payload.diaperType,
       changed_at: payload.happenedAt,
+      notes: payload.notes,
       client_uuid: payload.clientUuid,
     });
 
     if (error) {
+      console.error("[events/log] diaper insert failed", {
+        userId: user.id,
+        babyId: profile.active_baby_id,
+        code: error.code,
+        message: error.message,
+      });
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
   }

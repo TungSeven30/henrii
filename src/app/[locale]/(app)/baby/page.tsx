@@ -1,9 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-<<<<<<< HEAD
-=======
 import { BabyPhotoManager } from "@/components/baby/baby-photo-manager";
->>>>>>> security-audit-2026-02-11
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { deleteBabyProfileAction, updateBabyProfileAction } from "../../auth-actions";
 
@@ -60,11 +57,7 @@ export default async function BabyProfilePage({ params, searchParams }: BabyProf
 
   const { data: baby } = await supabase
     .from("babies")
-<<<<<<< HEAD
-    .select("id, name, date_of_birth, sex, country_code, timezone")
-=======
     .select("id, name, date_of_birth, sex, country_code, timezone, photo_url")
->>>>>>> security-audit-2026-02-11
     .eq("id", profile.active_baby_id)
     .single();
 
@@ -86,12 +79,9 @@ export default async function BabyProfilePage({ params, searchParams }: BabyProf
         <p className="henrii-feedback-success">Baby profile saved.</p>
       ) : null}
       <section className="henrii-card">
-<<<<<<< HEAD
-=======
         <BabyPhotoManager babyId={baby.id} initialPhotoUrl={baby.photo_url ?? null} />
       </section>
       <section className="henrii-card">
->>>>>>> security-audit-2026-02-11
         <form action={updateBabyProfileAction} className="grid gap-4">
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="babyId" value={baby.id} />

@@ -6,17 +6,16 @@ import * as path from "path";
 // attackers from spamming Sentry errors and exhausting quotas.
 describe("GET /api/debug/sentry (security regression test)", () => {
   it("should not exist - endpoint removed to prevent Sentry quota exhaustion attacks", () => {
-    // The route file should have been deleted from the sentry subdirectory
-    const sentryDir = path.join(__dirname, "..", "sentry");
-    const routePath = path.join(sentryDir, "route.ts");
+    // The removed route would live at src/app/api/debug/sentry/route.ts
+    const routePath = path.join(__dirname, "sentry", "route.ts");
     const routeFileExists = fs.existsSync(routePath);
-    
+
     expect(routeFileExists).toBe(false);
   });
 
   it("should have no sentry subfolder or it should not contain route.ts", () => {
-    const sentryDir = path.join(__dirname, "..", "sentry");
-    
+    const sentryDir = path.join(__dirname, "sentry");
+
     // If the sentry directory exists, it should not contain route.ts
     if (fs.existsSync(sentryDir)) {
       const files = fs.readdirSync(sentryDir);

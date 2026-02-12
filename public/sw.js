@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-const CACHE_NAME = "henrii-shell-v2";
-const OFFLINE_URLS = ["/", "/en", "/vi"];
-
-self.addEventListener("install", (event) => {
-=======
 const CACHE_NAME = "henrii-shell-v4";
 const OFFLINE_URLS = ["/", "/en", "/vi"];
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
->>>>>>> security-audit-2026-02-11
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(OFFLINE_URLS)),
   );
@@ -23,10 +16,7 @@ self.addEventListener("activate", (event) => {
         Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))),
       ),
   );
-<<<<<<< HEAD
-=======
   self.clients.claim();
->>>>>>> security-audit-2026-02-11
 });
 
 self.addEventListener("fetch", (event) => {

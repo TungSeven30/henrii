@@ -29,8 +29,6 @@ function mapStripeStatus(status: Stripe.Subscription.Status): SubscriptionRecord
   return "canceled";
 }
 
-<<<<<<< HEAD
-=======
 function unixToIso(value: number | null | undefined): string | null {
   if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
     return null;
@@ -50,8 +48,6 @@ function getPeriodRangeFromSubscription(subscription: unknown) {
     end: unixToIso(record.current_period_end),
   };
 }
-
->>>>>>> security-audit-2026-02-11
 async function upsertSubscription(record: SubscriptionRecord) {
   const admin = createSupabaseAdminClient();
   if (!admin) {
@@ -99,8 +95,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, ignored: "missing_user_id" });
     }
 
-<<<<<<< HEAD
-=======
     let currentPeriodStart: string | null = null;
     let currentPeriodEnd: string | null = null;
 
@@ -118,8 +112,6 @@ export async function POST(request: Request) {
         // Keep nullable period fields if fetch fails; follow-up webhook events will backfill.
       }
     }
-
->>>>>>> security-audit-2026-02-11
     await upsertSubscription({
       user_id: userId,
       plan: "premium",
@@ -130,13 +122,8 @@ export async function POST(request: Request) {
         typeof session.subscription === "string"
           ? session.subscription
           : session.subscription?.id ?? null,
-<<<<<<< HEAD
-      current_period_start: null,
-      current_period_end: null,
-=======
       current_period_start: currentPeriodStart,
       current_period_end: currentPeriodEnd,
->>>>>>> security-audit-2026-02-11
     });
   }
 
@@ -163,13 +150,8 @@ export async function POST(request: Request) {
           ? subscription.customer
           : subscription.customer.id,
       stripe_subscription_id: subscription.id,
-<<<<<<< HEAD
-      current_period_start: null,
-      current_period_end: null,
-=======
       current_period_start: getPeriodRangeFromSubscription(subscription).start,
       current_period_end: getPeriodRangeFromSubscription(subscription).end,
->>>>>>> security-audit-2026-02-11
     });
   }
 

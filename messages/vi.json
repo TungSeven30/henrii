@@ -17,14 +17,10 @@
     "or": "hoặc",
     "yes": "Có",
     "no": "Không",
-<<<<<<< HEAD
-    "language": "Ngon ngu"
-=======
     "language": "Ngon ngu",
     "saveFailed": "Khong the luu luc nay. Vui long thu lai.",
     "activeBabyRequired": "Vui long chon hoac tao ho so em be truoc.",
     "signInRequired": "Phien dang nhap da het han. Vui long dang nhap lai."
->>>>>>> security-audit-2026-02-11
   },
   "auth": {
     "login": "Đăng nhập",

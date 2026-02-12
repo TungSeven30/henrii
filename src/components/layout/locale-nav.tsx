@@ -11,10 +11,7 @@ type NavItem = {
 type LocaleNavProps = {
   appName: string;
   items: NavItem[];
-<<<<<<< HEAD
-=======
   brandHref?: string;
->>>>>>> security-audit-2026-02-11
 };
 
 function isActivePath(pathname: string, href: string) {
@@ -27,20 +24,12 @@ function isActivePath(pathname: string, href: string) {
   return pathname === hrefPath || pathname.startsWith(`${hrefPath}/`);
 }
 
-<<<<<<< HEAD
-export function LocaleNav({ appName, items }: LocaleNavProps) {
-=======
 export function LocaleNav({ appName, items, brandHref = "/" }: LocaleNavProps) {
->>>>>>> security-audit-2026-02-11
   const pathname = usePathname();
 
   return (
     <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-<<<<<<< HEAD
-      <Link className="font-heading text-2xl font-extrabold tracking-tight" href="/">
-=======
       <Link className="font-heading text-2xl font-extrabold tracking-tight" href={brandHref}>
->>>>>>> security-audit-2026-02-11
         {appName}
       </Link>
 

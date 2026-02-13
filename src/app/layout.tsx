@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Nunito } from "next/font/google";
 import "./globals.css";
+<<<<<<< HEAD
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { OfflineSyncProvider } from "@/components/offline/offline-sync-provider";
+=======
+import { OfflineSyncProvider } from "@/components/offline/offline-sync-provider";
+import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
+>>>>>>> security-audit-2026-02-11
 import { ThemeScheduleProvider } from "@/components/theme/theme-schedule-provider";
 import { Toaster } from "@/components/ui/sonner";
 

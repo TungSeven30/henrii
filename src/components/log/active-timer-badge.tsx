@@ -68,12 +68,23 @@ function TimerChip({ type, startedAt, onClick }: TimerChipProps) {
 export function ActiveTimerBadge() {
   const t = useTranslations("activeTimer");
   const activeBaby = useBabyStore((s) => s.activeBaby);
+<<<<<<< HEAD
   const { getTimersByBaby, stopTimer } = useTimerStore();
+=======
+  const activeTimers = useTimerStore((state) => state.activeTimers);
+  const stopTimer = useTimerStore((state) => state.stopTimer);
+>>>>>>> security-audit-2026-02-11
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [formToOpen, setFormToOpen] = useState<"sleep" | "feed" | null>(null);
 
+<<<<<<< HEAD
   const timers = activeBaby ? getTimersByBaby(activeBaby.id) : [];
+=======
+  const timers = activeBaby
+    ? activeTimers.filter((timer) => timer.babyId === activeBaby.id)
+    : [];
+>>>>>>> security-audit-2026-02-11
 
   const handleStop = useCallback(
     (id: string, type: "sleep" | "feeding") => {

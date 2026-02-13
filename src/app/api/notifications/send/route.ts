@@ -23,11 +23,24 @@ type AppointmentRow = {
 
 export async function POST(request: Request) {
   const expectedSecret = process.env.CRON_SECRET;
+<<<<<<< HEAD
   if (expectedSecret) {
     const provided = request.headers.get("x-cron-secret");
     if (provided !== expectedSecret) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+=======
+  if (!expectedSecret) {
+    return NextResponse.json(
+      { error: "CRON_SECRET not configured" },
+      { status: 503 }
+    );
+  }
+
+  const provided = request.headers.get("x-cron-secret");
+  if (provided !== expectedSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+>>>>>>> security-audit-2026-02-11
   }
 
   const supabase = createSupabaseAdminClient();

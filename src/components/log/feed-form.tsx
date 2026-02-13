@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+<<<<<<< HEAD
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+=======
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+>>>>>>> security-audit-2026-02-11
 import { logEvent } from "@/lib/log-event";
 import { incrementEventCount } from "@/lib/event-counter";
 import { useBabyStore } from "@/stores/baby-store";
@@ -62,6 +67,10 @@ export function FeedForm({ open, onOpenChange, initialData, onUpdated }: FeedFor
   const tCommon = useTranslations("common");
   const tSync = useTranslations("sync");
   const tTimeline = useTranslations("timeline");
+<<<<<<< HEAD
+=======
+  const router = useRouter();
+>>>>>>> security-audit-2026-02-11
   const activeBaby = useBabyStore((s) => s.activeBaby);
 
   const isEditMode = !!initialData?.id;
@@ -93,6 +102,7 @@ export function FeedForm({ open, onOpenChange, initialData, onUpdated }: FeedFor
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+<<<<<<< HEAD
     if (!activeBaby) return;
 
     setSubmitting(true);
@@ -105,17 +115,40 @@ export function FeedForm({ open, onOpenChange, initialData, onUpdated }: FeedFor
       const payload = {
         baby_id: activeBaby.id,
         logged_by: user?.id ?? null,
+=======
+    if (!activeBaby) {
+      toast.error(tCommon("activeBabyRequired"));
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const startedAtDate = new Date(startTime);
+      if (Number.isNaN(startedAtDate.getTime())) {
+        toast.error(tCommon("saveFailed"));
+        return;
+      }
+
+      const payload = {
+        baby_id: activeBaby.id,
+        logged_by: null,
+>>>>>>> security-audit-2026-02-11
         type,
         amount_ml: type === "bottle" && amountMl ? Number(amountMl) : null,
         amount_description:
           type === "solid" && amountDescription ? amountDescription : null,
+<<<<<<< HEAD
         started_at: new Date(startTime).toISOString(),
+=======
+        started_at: startedAtDate.toISOString(),
+>>>>>>> security-audit-2026-02-11
         ended_at: endTime || null,
         duration_minutes: calculateDuration(startTime, endTime || null),
         notes: notes || null,
       };
 
       if (isEditMode && initialData?.id) {
+<<<<<<< HEAD
         const updatePayload = {
           feeding_type: type,
           amount_ml: type === "bottle" && amountMl ? Number(amountMl) : null,
@@ -133,22 +166,75 @@ export function FeedForm({ open, onOpenChange, initialData, onUpdated }: FeedFor
         }
         toast.success(tTimeline("updated"));
         onUpdated?.();
+=======
+        const response = await fetch("/api/events/mutate", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            table: "feedings",
+            operation: "update",
+            id: initialData.id,
+            expectedUpdatedAt: null,
+            patch: {
+              feeding_type: type,
+              amount_ml: type === "bottle" && amountMl ? Number(amountMl) : null,
+              started_at: startedAtDate.toISOString(),
+              notes: notes || null,
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          const data = (await response.json().catch(() => null)) as
+            | { error?: unknown }
+            | null;
+          toast.error(
+            data && typeof data.error === "string" ? data.error : tTimeline("updateError"),
+          );
+          return;
+        }
+
+        toast.success(tTimeline("updated"));
+        onUpdated?.();
+        router.refresh();
+>>>>>>> security-audit-2026-02-11
       } else {
         const result = await logEvent({
           tableName: "feedings",
           payload,
         });
 
+<<<<<<< HEAD
+=======
+        if (!result.success) {
+          toast.error(result.error ?? tCommon("saveFailed"));
+          return;
+        }
+
+>>>>>>> security-audit-2026-02-11
         if (result.offline) {
           toast(tSync("pending"));
         } else {
           toast.success(t("logged"));
         }
         incrementEventCount();
+<<<<<<< HEAD
+=======
+        router.refresh();
+>>>>>>> security-audit-2026-02-11
       }
 
       if (!isEditMode) resetForm();
       onOpenChange(false);
+<<<<<<< HEAD
+=======
+    } catch (error) {
+      if (error instanceof Error && error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error(tCommon("saveFailed"));
+      }
+>>>>>>> security-audit-2026-02-11
     } finally {
       setSubmitting(false);
     }

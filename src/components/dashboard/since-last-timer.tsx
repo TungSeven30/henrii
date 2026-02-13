@@ -17,14 +17,24 @@ function formatElapsed(ms: number): string {
 }
 
 function useMinuteClock(): number {
+<<<<<<< HEAD
   // Returns Date.now() floored to the current minute, re-subscribing every 60s.
+=======
+  // useSyncExternalStore snapshots must be stable during a render.
+  // Using Date.now() directly can cause infinite update loops in production.
+>>>>>>> security-audit-2026-02-11
   return useSyncExternalStore(
     (callback) => {
       const interval = setInterval(callback, 60_000);
       return () => clearInterval(interval);
     },
+<<<<<<< HEAD
     () => Date.now(),
     () => Date.now()
+=======
+    () => Math.floor(Date.now() / 60_000),
+    () => Math.floor(Date.now() / 60_000),
+>>>>>>> security-audit-2026-02-11
   );
 }
 
@@ -32,7 +42,12 @@ export function SinceLastTimer({
   timestamp,
   warningThresholdMinutes,
 }: SinceLastTimerProps) {
+<<<<<<< HEAD
   const now = useMinuteClock();
+=======
+  const minuteTick = useMinuteClock();
+  const now = minuteTick * 60_000;
+>>>>>>> security-audit-2026-02-11
 
   if (!timestamp) return <span>-</span>;
 

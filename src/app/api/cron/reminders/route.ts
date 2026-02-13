@@ -10,11 +10,16 @@ import { POST as sendNotifications } from "@/app/api/notifications/send/route";
 export async function GET(request: NextRequest) {
   const expectedSecret = process.env.CRON_SECRET;
 
-  if (expectedSecret) {
-    const authHeader = request.headers.get("authorization");
-    if (authHeader !== `Bearer ${expectedSecret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!expectedSecret) {
+    return NextResponse.json(
+      { error: "CRON_SECRET not configured" },
+      { status: 503 }
+    );
+  }
+
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${expectedSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const delegated = new Request(request.url, {

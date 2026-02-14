@@ -17,7 +17,7 @@ The name "henrii" is inspired by the developer's newborn son, Henry.
 Status snapshot date: 2026-02-14 (branch: `security-merge`, head: `87d5b98`)
 
 - [x] Project scaffolding (Next.js App Router, Supabase, Tailwind, shadcn/ui)
-- [ ] Authentication system (Google + email magic link complete; Apple OAuth pending)
+- [x] Authentication system (Google + email magic link complete; Apple OAuth intentionally deferred)
 - [x] Database schema design and migration
 - [x] i18n setup (next-intl, English + Vietnamese)
 - [x] PWA configuration (service worker, manifest, offline support)
@@ -137,9 +137,9 @@ Milestone-level status:
 - M8 Freemium, Landing Page & Polish: mostly completed (Playwright E2E and production hardening remain)
 
 Outstanding work to close release:
-- Add Apple OAuth provider wiring and end-to-end sign-in validation.
-- Add Playwright E2E smoke coverage for core flows (log feed, timer, photo upload, offline replay, invite acceptance).
-- Run final production configuration verification (all public/server env vars, cron auth, and webhook secrets).
+- Populate `.env.production.local` with real values and run final production configuration verification (`verify:production-config`), keeping Stripe checks optional unless deliberately enabled.
+- Add/Create a valid Playwright auth state (`playwright/.auth/user.json`) and run authenticated smoke suite in release mode (`test:e2e:auth`).
+- Add Playwright E2E coverage for invite-acceptance and any missed data-path regressions in existing smoke flows if needed.
 
 
 ## Context and Orientation

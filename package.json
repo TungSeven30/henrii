@@ -13,7 +13,10 @@
     "test:integration": "RUN_DB_INTEGRATION=1 vitest run src/integration/m6-conflicts.integration.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:smoke": "playwright test e2e/smoke.e2e.ts"
+    "test:smoke": "playwright test e2e/smoke.e2e.ts",
+    "test:e2e:auth": "PLAYWRIGHT_REQUIRE_AUTH=1 npm run test:smoke",
+    "verify:production-config": "node scripts/verify-production-config.mjs",
+    "verify:release": "npm run verify:production-config && npm run test:e2e:auth"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

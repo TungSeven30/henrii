@@ -594,20 +594,26 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
               const definition = item.milestone_definitions;
               const title =
                 locale === "vi" ? definition?.name_vi ?? item.milestone_key : definition?.name_en ?? item.milestone_key;
-              const iconColor =
+              const iconClass =
                 item.status === "achieved"
                   ? "text-emerald-700"
                   : item.status === "emerging"
                     ? "text-amber-600"
-                    : "text-muted-foreground";
+                    : "text-slate-500";
+              const iconContainerClass =
+                item.status === "achieved"
+                  ? "border-emerald-300 bg-emerald-50"
+                  : item.status === "emerging"
+                    ? "border-amber-300 bg-amber-50"
+                    : "border-slate-300/60 bg-slate-50";
 
               return (
                 <li key={item.id} className="rounded-xl border border-border/70 p-3">
                   <div className="flex gap-3">
-                    <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-secondary/50">
+                    <div className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border ${iconContainerClass}`}>
                       <MilestoneItemArtwork
                         milestoneKey={item.milestone_key}
-                        className={`h-5 w-5 ${iconColor}`}
+                        className={`h-6 w-6 ${iconClass}`}
                       />
                     </div>
                     <div className="min-w-0 flex-1">

@@ -6,6 +6,5 @@ type NewBabyPageProps = {
 
 export default async function NewBabyPage({ params }: NewBabyPageProps) {
   const { locale } = await params;
-  redirect(`/${locale}/onboarding`);
+  redirect(`/${locale}/onboarding?mode=add`);
 }
-

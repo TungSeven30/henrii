@@ -5,7 +5,7 @@ import { createBabyProfileAction } from "../../auth-actions";
 
 type OnboardingPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ error?: string; deleted?: string }>;
+  searchParams: Promise<{ error?: string; deleted?: string; mode?: string }>;
 };
 
 export const dynamic = "force-dynamic";
@@ -40,13 +40,14 @@ export default async function OnboardingPage({ params, searchParams }: Onboardin
     redirect(`/${locale}/login`);
   }
 
+  const isAddMode = query.mode === "add";
   const { data: profile } = await supabase
     .from("profiles")
     .select("active_baby_id")
     .eq("id", user.id)
     .maybeSingle();
 
-  if (profile?.active_baby_id) {
+  if (!isAddMode && profile?.active_baby_id) {
     redirect(`/${locale}/dashboard`);
   }
 
@@ -60,8 +61,9 @@ export default async function OnboardingPage({ params, searchParams }: Onboardin
         <header className="space-y-2">
           <h1 className="font-heading text-3xl font-bold tracking-tight">{t("createBaby")}</h1>
           <p className="text-sm text-muted-foreground">
-            Create your baby profile to unlock quick logging, dashboard summaries, and
-            sharing with caregivers.
+            {isAddMode
+              ? "Add another baby profile to track multiple babies in one account."
+              : "Create your baby profile to unlock quick logging, dashboard summaries, and sharing with caregivers."}
           </p>
         </header>
         {errorMessage ? (
@@ -75,6 +77,7 @@ export default async function OnboardingPage({ params, searchParams }: Onboardin
 
         <form action={createBabyProfileAction} className="grid gap-4">
           <input type="hidden" name="locale" value={locale} />
+          {isAddMode ? <input type="hidden" name="mode" value="add" /> : null}
           <label className="grid gap-1 text-sm">
             Baby name
             <input
@@ -130,7 +133,7 @@ export default async function OnboardingPage({ params, searchParams }: Onboardin
             </label>
           </div>
           <button type="submit" className="henrii-btn-primary mt-2 h-11">
-            Continue to dashboard
+            {isAddMode ? "Add baby" : "Continue to dashboard"}
           </button>
         </form>
       </section>

@@ -106,6 +106,7 @@ export async function signOutAction(formData: FormData) {
 
 export async function createBabyProfileAction(formData: FormData) {
   const locale = getSafeLocale(formData.get("locale")?.toString() ?? null);
+  const isAddMode = formData.get("mode")?.toString() === "add";
   const name = formData.get("name")?.toString().trim() ?? "";
   const dateOfBirth = formData.get("dateOfBirth")?.toString() ?? "";
   const sex =
@@ -115,12 +116,16 @@ export async function createBabyProfileAction(formData: FormData) {
   const countryCode = formData.get("countryCode")?.toString() ?? "US";
   const timezone = formData.get("timezone")?.toString() ?? "UTC";
 
+  const onboardingFailureSuffix = isAddMode ? "mode=add&" : "";
+  const redirectWithError = (errorCode: string) =>
+    redirect(`/${locale}/onboarding?${onboardingFailureSuffix}error=${errorCode}`);
+
   if (!name || !dateOfBirth) {
-    redirect(`/${locale}/onboarding?error=missing_fields`);
+    redirectWithError("missing_fields");
   }
 
   if (!isValidIsoDateInput(dateOfBirth) || isFutureIsoDate(dateOfBirth)) {
-    redirect(`/${locale}/onboarding?error=invalid_dob`);
+    redirectWithError("invalid_dob");
   }
 
   const supabase = await createSupabaseServerClient();
@@ -147,7 +152,7 @@ export async function createBabyProfileAction(formData: FormData) {
     .single();
 
   if (insertBabyError || !insertedBaby) {
-    redirect(`/${locale}/onboarding?error=baby_create_failed`);
+    redirectWithError("baby_create_failed");
   }
 
   await supabase.from("caregivers").upsert(
@@ -182,7 +187,7 @@ export async function createBabyProfileAction(formData: FormData) {
   );
 
   if (updateProfileError) {
-    redirect(`/${locale}/onboarding?error=profile_update_failed`);
+    redirectWithError("profile_update_failed");
   }
 
   redirect(`/${locale}/dashboard?onboarded=1`);

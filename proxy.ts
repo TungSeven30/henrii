@@ -5,7 +5,16 @@ import { routing } from "./src/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-const PUBLIC_PATHS = ["/", "/login", "/auth", "/privacy", "/terms", "/invite", "/site"];
+const PUBLIC_PATHS = [
+  "/",
+  "/login",
+  "/auth",
+  "/privacy",
+  "/terms",
+  "/invite",
+  "/site",
+  "/blog",
+];
 
 function isPublicPath(pathname: string) {
   const pathWithoutLocale = pathname.replace(/^\/(en|vi)/, "") || "/";
@@ -29,7 +38,9 @@ async function updateSession(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        cookiesToSet.forEach(({ name, value }) =>
+          request.cookies.set(name, value),
+        );
         supabaseResponse = NextResponse.next({ request });
         cookiesToSet.forEach(({ name, value, options }) =>
           supabaseResponse.cookies.set(name, value, options),

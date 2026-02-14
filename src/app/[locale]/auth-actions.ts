@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { normalizeBabySex } from "@/lib/babies/sex";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { routing } from "@/i18n/routing";
 
@@ -108,7 +109,7 @@ export async function createBabyProfileAction(formData: FormData) {
   const locale = getSafeLocale(formData.get("locale")?.toString() ?? null);
   const name = formData.get("name")?.toString().trim() ?? "";
   const dateOfBirth = formData.get("dateOfBirth")?.toString() ?? "";
-  const sex = formData.get("sex")?.toString() ?? "unknown";
+  const sex = normalizeBabySex(formData.get("sex")?.toString());
   const countryCode = formData.get("countryCode")?.toString() ?? "US";
   const timezone = formData.get("timezone")?.toString() ?? "UTC";
 
@@ -190,7 +191,7 @@ export async function updateBabyProfileAction(formData: FormData) {
   const babyId = formData.get("babyId")?.toString() ?? "";
   const name = formData.get("name")?.toString().trim() ?? "";
   const dateOfBirth = formData.get("dateOfBirth")?.toString() ?? "";
-  const sex = formData.get("sex")?.toString() ?? "unknown";
+  const sex = normalizeBabySex(formData.get("sex")?.toString());
   const countryCode = formData.get("countryCode")?.toString() ?? "US";
   const timezone = formData.get("timezone")?.toString() ?? "UTC";
 

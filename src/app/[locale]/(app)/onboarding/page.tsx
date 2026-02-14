@@ -98,10 +98,8 @@ export default async function OnboardingPage({ params, searchParams }: Onboardin
             <label className="grid gap-1 text-sm">
               Sex
               <select name="sex" className="henrii-select">
-                <option value="unknown">Unknown</option>
                 <option value="female">Female</option>
                 <option value="male">Male</option>
-                <option value="other">Other</option>
               </select>
             </label>
             <label className="grid gap-1 text-sm">

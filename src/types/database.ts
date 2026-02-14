@@ -160,7 +160,7 @@ export type Database = {
           name: string
           owner_id: string
           photo_url: string | null
-          sex: string
+          sex: "male" | "female"
           timezone: string
           updated_at: string
         }
@@ -172,7 +172,7 @@ export type Database = {
           name: string
           owner_id: string
           photo_url?: string | null
-          sex?: string
+          sex?: "male" | "female"
           timezone?: string
           updated_at?: string
         }
@@ -184,7 +184,7 @@ export type Database = {
           name?: string
           owner_id?: string
           photo_url?: string | null
-          sex?: string
+          sex?: "male" | "female"
           timezone?: string
           updated_at?: string
         }

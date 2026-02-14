@@ -1,16 +1,29 @@
 import { create } from "zustand";
 import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
+import { isBabySex, type BabySex } from "@/lib/babies/sex";
 
 export interface Baby {
   id: string;
   name: string;
   date_of_birth: string;
-  gender?: string | null;
-  sex?: string | null;
+  gender?: BabySex | null;
+  sex?: BabySex | null;
   country_code: string;
   timezone: string;
   photo_url?: string | null;
   owner_id?: string;
+}
+
+function normalizeBabySexOrNull(value: string | null | undefined): BabySex | null {
+  return isBabySex(value) ? value : null;
+}
+
+function normalizeBabySexFields(baby: Baby) {
+  return {
+    ...baby,
+    gender: normalizeBabySexOrNull(baby.gender ?? null),
+    sex: normalizeBabySexOrNull(baby.sex ?? null),
+  } as Baby;
 }
 
 type BabyHydrationInput = {
@@ -94,14 +107,15 @@ export const useBabyStore = create<BabyStore>()(
         });
       },
       setActiveBaby: (baby) => {
+        const normalizedBaby = normalizeBabySexFields(baby);
         set((state) => {
-          const allBabies = state.allBabies.some((item) => item.id === baby.id)
-            ? state.allBabies.map((item) => (item.id === baby.id ? baby : item))
-            : [...state.allBabies, baby];
+          const allBabies = state.allBabies.some((item) => item.id === normalizedBaby.id)
+            ? state.allBabies.map((item) => (item.id === normalizedBaby.id ? normalizedBaby : item))
+            : [...state.allBabies, normalizedBaby];
 
           if (
             state.activeBabyId === baby.id &&
-            isSameBaby(state.activeBaby, baby) &&
+            isSameBaby(state.activeBaby, normalizedBaby) &&
             areSameBabies(state.allBabies, allBabies)
           ) {
             return state;
@@ -109,25 +123,26 @@ export const useBabyStore = create<BabyStore>()(
 
           return {
             activeBabyId: baby.id,
-            activeBaby: baby,
+            activeBaby: normalizedBaby,
             allBabies,
           };
         });
       },
       setAllBabies: (allBabies) => {
+        const normalizedBabies = allBabies.map(normalizeBabySexFields);
         const activeBabyId = get().activeBabyId;
         set((state) => {
-          const nextActiveBaby = resolveActiveBaby(allBabies, activeBabyId);
+          const nextActiveBaby = resolveActiveBaby(normalizedBabies, activeBabyId);
 
           if (
-            areSameBabies(state.allBabies, allBabies) &&
+            areSameBabies(state.allBabies, normalizedBabies) &&
             isSameBaby(state.activeBaby, nextActiveBaby)
           ) {
             return state;
           }
 
           return {
-            allBabies,
+            allBabies: normalizedBabies,
             activeBaby: nextActiveBaby,
           };
         });

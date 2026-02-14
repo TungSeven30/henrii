@@ -7,6 +7,7 @@ import {
   calculateGrowthPercentileFromDates,
   type GrowthSex,
 } from "@/lib/growth/percentile";
+import { isBabySex } from "@/lib/babies/sex";
 import { whoGrowthTables } from "@/lib/growth/who-growth-tables";
 import { defaultMilestoneDefinitions } from "@/lib/milestones/definitions";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -46,11 +47,11 @@ function isValidIsoDateInput(value: string) {
 }
 
 function mapBabySexToGrowthSex(sex: string | null | undefined): GrowthSex {
-  if (sex === "male") {
-    return "male";
+  if (isBabySex(sex)) {
+    return sex;
   }
 
-  return "female";
+  return "male";
 }
 
 async function ensureCanWriteOrRedirect({

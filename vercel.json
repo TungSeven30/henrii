@@ -2,11 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/reminders",
-<<<<<<< HEAD
       "schedule": "0 * * * *"
-=======
-      "schedule": "0 9 * * *"
->>>>>>> security-audit-2026-02-11
     }
   ]
 }

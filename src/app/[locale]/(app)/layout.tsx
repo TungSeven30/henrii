@@ -15,10 +15,6 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   const common = await getTranslations({ locale, namespace: "common" });
 
   const navItems = [
-<<<<<<< HEAD
-    { href: "/", label: nav("home") },
-=======
->>>>>>> security-audit-2026-02-11
     { href: "/dashboard", label: nav("dashboard") },
     { href: "/settings", label: nav("settings") },
   ];
@@ -26,11 +22,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   return (
     <div className="min-h-dvh pb-20">
       <header className="sticky top-0 z-20 border-b border-border/40 bg-background/85 backdrop-blur-md">
-<<<<<<< HEAD
-        <LocaleNav appName={common("appName")} items={navItems} />
-=======
         <LocaleNav appName={common("appName")} items={navItems} brandHref="/dashboard" />
->>>>>>> security-audit-2026-02-11
       </header>
       {children}
       <MobileBottomNav

@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:integration": "RUN_DB_INTEGRATION=1 vitest run src/integration/m6-conflicts.integration.test.ts"
+    "test:integration": "RUN_DB_INTEGRATION=1 vitest run src/integration/m6-conflicts.integration.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:smoke": "playwright test e2e/smoke.e2e.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

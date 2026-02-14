@@ -40,8 +40,6 @@ function resolveActiveBaby(babies: Baby[], babyId: string | null) {
   return babies.find((baby) => baby.id === babyId) ?? null;
 }
 
-<<<<<<< HEAD
-=======
 function isSameBaby(a: Baby | null, b: Baby | null) {
   if (a === b) {
     return true;
@@ -75,8 +73,6 @@ function areSameBabies(a: Baby[], b: Baby[]) {
 
   return a.every((baby, index) => isSameBaby(baby, b[index] ?? null));
 }
-
->>>>>>> security-audit-2026-02-11
 export const useBabyStore = create<BabyStore>()(
   persist(
     (set, get) => ({
@@ -85,12 +81,6 @@ export const useBabyStore = create<BabyStore>()(
       allBabies: [],
       hydrated: false,
       setActiveBabyId: (babyId) => {
-<<<<<<< HEAD
-        set((state) => ({
-          activeBabyId: babyId,
-          activeBaby: resolveActiveBaby(state.allBabies, babyId) ?? state.activeBaby,
-        }));
-=======
         set((state) => {
           const nextActiveBaby = resolveActiveBaby(state.allBabies, babyId) ?? state.activeBaby;
           if (state.activeBabyId === babyId && isSameBaby(state.activeBaby, nextActiveBaby)) {
@@ -102,7 +92,6 @@ export const useBabyStore = create<BabyStore>()(
             activeBaby: nextActiveBaby,
           };
         });
->>>>>>> security-audit-2026-02-11
       },
       setActiveBaby: (baby) => {
         set((state) => {
@@ -110,8 +99,6 @@ export const useBabyStore = create<BabyStore>()(
             ? state.allBabies.map((item) => (item.id === baby.id ? baby : item))
             : [...state.allBabies, baby];
 
-<<<<<<< HEAD
-=======
           if (
             state.activeBabyId === baby.id &&
             isSameBaby(state.activeBaby, baby) &&
@@ -120,7 +107,6 @@ export const useBabyStore = create<BabyStore>()(
             return state;
           }
 
->>>>>>> security-audit-2026-02-11
           return {
             activeBabyId: baby.id,
             activeBaby: baby,
@@ -130,11 +116,6 @@ export const useBabyStore = create<BabyStore>()(
       },
       setAllBabies: (allBabies) => {
         const activeBabyId = get().activeBabyId;
-<<<<<<< HEAD
-        set({
-          allBabies,
-          activeBaby: resolveActiveBaby(allBabies, activeBabyId),
-=======
         set((state) => {
           const nextActiveBaby = resolveActiveBaby(allBabies, activeBabyId);
 
@@ -149,19 +130,11 @@ export const useBabyStore = create<BabyStore>()(
             allBabies,
             activeBaby: nextActiveBaby,
           };
->>>>>>> security-audit-2026-02-11
         });
       },
       clearActiveBaby: () => set({ activeBabyId: null, activeBaby: null, allBabies: [] }),
       hydrateFromProfile: ({ defaultBabyId, caregiverBabyIds = [] }) => {
         const firstAvailableBabyId = defaultBabyId ?? caregiverBabyIds[0] ?? null;
-<<<<<<< HEAD
-        set((state) => ({
-          activeBabyId: firstAvailableBabyId,
-          activeBaby: resolveActiveBaby(state.allBabies, firstAvailableBabyId),
-          hydrated: true,
-        }));
-=======
         set((state) => {
           const nextActiveBaby = resolveActiveBaby(state.allBabies, firstAvailableBabyId);
           if (
@@ -178,7 +151,6 @@ export const useBabyStore = create<BabyStore>()(
             hydrated: true,
           };
         });
->>>>>>> security-audit-2026-02-11
       },
       markHydrated: () => set({ hydrated: true }),
       reset: () =>

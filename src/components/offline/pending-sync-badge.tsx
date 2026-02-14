@@ -12,7 +12,10 @@ export function PendingSyncBadge() {
   }
 
   return (
-    <div className="rounded-2xl border border-border/70 bg-card px-4 py-3 text-sm shadow-sm">
+    <div
+      data-testid="pending-sync-badge"
+      className="rounded-2xl border border-border/70 bg-card px-4 py-3 text-sm shadow-sm"
+    >
       <p className="font-semibold">
         {pendingCount > 0 ? `${pendingCount} pending sync` : "All changes synced"}
       </p>

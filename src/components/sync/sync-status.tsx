@@ -1,24 +1,17 @@
 "use client";
 
-<<<<<<< HEAD
-=======
 import { useMemo } from "react";
->>>>>>> security-audit-2026-02-11
 import { useTranslations } from "next-intl";
 import { AlertTriangle } from "lucide-react";
 import { useDuplicateStore } from "@/stores/duplicate-store";
 
 export function SyncStatus() {
   const t = useTranslations("sync");
-<<<<<<< HEAD
-  const unresolved = useDuplicateStore((s) => s.getUnresolved());
-=======
   const flags = useDuplicateStore((s) => s.flags);
   const unresolved = useMemo(
     () => flags.filter((flag) => !flag.resolved),
     [flags],
   );
->>>>>>> security-audit-2026-02-11
 
   if (unresolved.length === 0) return null;
 

@@ -1,10 +1,12 @@
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
+import { Link } from "@/i18n/navigation";
 import {
   PercentileCurvesChart,
   type PercentileCurvePoint,
 } from "@/components/growth/percentile-curves-chart";
 import { getActiveBabyContext } from "@/lib/supabase/get-active-baby-context";
+import { buildWHOCurveData, type GrowthMetricTab } from "@/lib/growth/who-percentile-curves";
 import {
   UNIT_SYSTEM_COOKIE_NAME,
   cmToIn,
@@ -20,7 +22,32 @@ import {
 
 type GrowthPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ error?: string; logged?: string; seeded?: string; updated?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    logged?: string;
+    seeded?: string;
+    updated?: string;
+    metric?: string;
+  }>;
+};
+
+type GrowthMeasurementRow = {
+  id: string;
+  measured_at: string;
+  weight_kg?: number | string | null;
+  weight_grams?: number | string | null;
+  length_cm?: number | string | null;
+  head_circumference_cm?: number | string | null;
+  weight_percentile?: number | string | null;
+  length_percentile?: number | string | null;
+  head_percentile?: number | string | null;
+  notes: string | null;
+};
+
+type BabyRow = {
+  name: string | null;
+  date_of_birth: string | null;
+  sex: "male" | "female" | null;
 };
 
 type MilestoneRow = {
@@ -110,6 +137,195 @@ function toNumberOrNull(value: unknown) {
   return null;
 }
 
+const DAYS_PER_MONTH = 30.4375;
+
+function parseGrowthMetric(rawMetric?: string): GrowthMetricTab {
+  if (rawMetric === "length" || rawMetric === "head") {
+    return rawMetric;
+  }
+
+  return "weight";
+}
+
+function getMetricLabel(metric: GrowthMetricTab) {
+  switch (metric) {
+    case "length":
+      return {
+        percentileKey: "length_percentile" as const,
+      };
+    case "head":
+      return {
+        percentileKey: "head_percentile" as const,
+      };
+    default:
+      return {
+        percentileKey: "weight_percentile" as const,
+      };
+  }
+}
+
+function calculateAgeMonths(dobIso: string, measuredAt: string) {
+  const dobMs = new Date(`${dobIso}T00:00:00.000Z`).getTime();
+  const measuredMs = new Date(`${measuredAt}T00:00:00.000Z`).getTime();
+  const deltaMs = measuredMs - dobMs;
+  if (!Number.isFinite(dobMs) || !Number.isFinite(measuredMs) || deltaMs <= 0) {
+    return null;
+  }
+
+  return (deltaMs / (1000 * 60 * 60 * 24)) / DAYS_PER_MONTH;
+}
+
+function valueForMetric(
+  row: GrowthMeasurementRow,
+  metric: GrowthMetricTab,
+  unitSystem: UnitSystem,
+) {
+  if (metric === "weight") {
+    const weightKg = parseWeightKg(row);
+    if (weightKg === null) {
+      return null;
+    }
+
+    return unitSystem === "imperial" ? kgToLb(weightKg) : weightKg;
+  }
+
+  if (metric === "length") {
+    const lengthCm = parseNumericMeasurement(row.length_cm);
+    if (lengthCm === null) {
+      return null;
+    }
+
+    return unitSystem === "imperial" ? cmToIn(lengthCm) : lengthCm;
+  }
+
+  const headCircumferenceCm = parseNumericMeasurement(row.head_circumference_cm);
+  if (headCircumferenceCm === null) {
+    return null;
+  }
+
+  return unitSystem === "imperial"
+    ? cmToIn(headCircumferenceCm)
+    : headCircumferenceCm;
+}
+
+function parseNumericMeasurement(value: number | string | null | undefined) {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+function parseWeightKg(row: GrowthMeasurementRow) {
+  const weightKg = parseNumericMeasurement(row.weight_kg);
+  if (weightKg !== null && weightKg > 0) {
+    return weightKg;
+  }
+
+  const weightGrams = parseNumericMeasurement(row.weight_grams);
+  if (weightGrams !== null && weightGrams > 0) {
+    return weightGrams / 1000;
+  }
+
+  return null;
+}
+
+function buildGrowthChartData(
+  measurements: GrowthMeasurementRow[] | null,
+  metric: GrowthMetricTab,
+  unitSystem: UnitSystem,
+  babySex: BabyRow["sex"],
+  babyDateOfBirth: BabyRow["date_of_birth"],
+): PercentileCurvePoint[] {
+  if (!babyDateOfBirth) {
+    return [];
+  }
+
+  const rawRows = measurements ?? [];
+  const rows = [...rawRows].reverse();
+  const chartRows = new Map<number, PercentileCurvePoint>();
+
+  const labels = getMetricLabel(metric);
+  const percentileValues = rows.map((row) => {
+    const ageMonths = calculateAgeMonths(babyDateOfBirth, row.measured_at);
+    const value = valueForMetric(row, metric, unitSystem);
+    const percentile =
+      labels.percentileKey === "weight_percentile"
+        ? toNumberOrNull(row.weight_percentile)
+        : labels.percentileKey === "length_percentile"
+          ? toNumberOrNull(row.length_percentile)
+          : toNumberOrNull(row.head_percentile);
+
+    return {
+      ageMonths,
+      value,
+      date: row.measured_at,
+      percentile,
+    };
+  });
+
+  let maxMonths = 12;
+  for (const row of percentileValues) {
+    if (row.ageMonths && row.ageMonths > maxMonths) {
+      maxMonths = row.ageMonths;
+    }
+  }
+
+  const todayAgeMonths = calculateAgeMonths(babyDateOfBirth, new Date().toISOString().slice(0, 10));
+  if (todayAgeMonths && todayAgeMonths > maxMonths) {
+    maxMonths = todayAgeMonths;
+  }
+
+  const curves = buildWHOCurveData(metric, babySex === "female" ? "female" : "male", maxMonths + 3, unitSystem);
+
+  for (const point of curves) {
+    const key = Math.round(point.ageMonths * 10) / 10;
+    chartRows.set(key, {
+      ageMonths: key,
+      p3: point.p3,
+      p15: point.p15,
+      p50: point.p50,
+      p85: point.p85,
+      p97: point.p97,
+    });
+  }
+
+  for (const row of percentileValues) {
+    if (!row.ageMonths) {
+      continue;
+    }
+
+    const value = row.value;
+    if (typeof value !== "number" || !Number.isFinite(value)) {
+      continue;
+    }
+
+    const ageMonths = Math.round(row.ageMonths * 10) / 10;
+    const existing = chartRows.get(ageMonths) ?? {
+      ageMonths,
+      p3: null,
+      p15: null,
+      p50: null,
+      p85: null,
+      p97: null,
+    };
+    const point = {
+      ...existing,
+      measuredValue: Number(value.toFixed(2)),
+      measuredPercentile: row.percentile ?? null,
+      date: row.date,
+    };
+    chartRows.set(ageMonths, point);
+  }
+
+  return [...chartRows.values()].sort((left, right) => left.ageMonths - right.ageMonths);
+}
+
 function formatWeight(valueKg: number | null | undefined, unitSystem: UnitSystem) {
   if (typeof valueKg !== "number" || !Number.isFinite(valueKg) || valueKg <= 0) {
     return "—";
@@ -134,6 +350,42 @@ function formatLength(valueCm: number | null | undefined, unitSystem: UnitSystem
   return `${valueCm.toFixed(1)}cm`;
 }
 
+function extractWeightKg(measurement: GrowthMeasurementRow) {
+  const parsed = parseWeightKg(measurement);
+  if (parsed === null || !Number.isFinite(parsed)) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function extractLengthCm(measurement: GrowthMeasurementRow) {
+  const parsed = parseNumericMeasurement(measurement.length_cm);
+  if (parsed === null || !Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function extractHeadCm(measurement: GrowthMeasurementRow) {
+  const parsed = parseNumericMeasurement(measurement.head_circumference_cm);
+  if (parsed === null || !Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function formatPercentile(value: number | string | null | undefined) {
+  const parsed = toNumberOrNull(value);
+  if (parsed === null) {
+    return "—";
+  }
+
+  return `${Math.round(parsed)}th`;
+}
+
 export default async function GrowthPage({ params, searchParams }: GrowthPageProps) {
   const { locale } = await params;
   const query = await searchParams;
@@ -145,45 +397,52 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
   const [{ data: baby }, { data: measurements }, { data: milestones }] = await Promise.all([
     supabase
       .from("babies")
-      .select("name")
+      .select("name, date_of_birth, sex")
       .eq("id", activeBabyId)
       .single(),
     supabase
       .from("growth_measurements")
-      .select(
-        "id, measured_at, weight_kg, length_cm, head_circumference_cm, weight_percentile, length_percentile, head_percentile, notes",
-      )
+      .select("*")
       .eq("baby_id", activeBabyId)
       .order("measured_at", { ascending: false })
       .limit(30),
     supabase
-      .from("developmental_milestones")
+    .from("developmental_milestones")
       .select(
         "id, milestone_key, status, achieved_at, notes, milestone_definitions(name_en, name_vi, category, typical_age_min_months, typical_age_max_months)",
       )
       .eq("baby_id", activeBabyId)
       .order("created_at", { ascending: true }),
   ]);
+  const typedBaby = (baby as BabyRow | null) ?? null;
 
+  const growthMetric = parseGrowthMetric(query.metric);
+  const metricTabs: Array<{ key: GrowthMetricTab; label: string }> = [
+    { key: "weight", label: t("weight") },
+    { key: "length", label: t("length") },
+    { key: "head", label: t("head") },
+  ];
+  const chartData = buildGrowthChartData(
+    measurements as GrowthMeasurementRow[] | null,
+    growthMetric,
+    unitSystem,
+    (typedBaby?.sex as BabyRow["sex"] | null) ?? "male",
+    typedBaby?.date_of_birth ?? null,
+  );
   const today = new Date().toISOString().slice(0, 10);
   const milestoneRows = (milestones as MilestoneRow[] | null) ?? [];
-  const chartData: PercentileCurvePoint[] = [...(measurements ?? [])]
-    .reverse()
-    .map((item) => {
-      const date = item.measured_at;
-      return {
-        date,
-        label: date.slice(5),
-        weightPercentile: toNumberOrNull(item.weight_percentile),
-        lengthPercentile: toNumberOrNull(item.length_percentile),
-        headPercentile: toNumberOrNull(item.head_percentile),
-      };
-    });
   const feedback = getGrowthFeedback(query);
   const todayIso = new Date().toISOString().slice(0, 10);
   const weightLabel = unitSystem === "imperial" ? t("weightLb") : t("weightKg");
   const lengthLabel = unitSystem === "imperial" ? t("lengthIn") : t("lengthCm");
   const headLabel = unitSystem === "imperial" ? t("headCircumferenceIn") : t("headCircumferenceCm");
+  const valueLabel =
+    growthMetric === "weight"
+      ? t("weight")
+      : growthMetric === "length"
+        ? t("length")
+        : t("head");
+  const chartUnit = growthMetric === "weight" ? (unitSystem === "imperial" ? t("lb") : t("kg")) : (unitSystem === "imperial" ? t("in") : t("cm"));
 
   return (
     <main className="henrii-page">
@@ -194,8 +453,23 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
         </p>
       ) : null}
       <p className="henrii-subtitle">
-        {t("forBaby")}: <span className="font-semibold text-foreground">{baby?.name ?? "Unknown"}</span>
+        {t("forBaby")}: <span className="font-semibold text-foreground">{typedBaby?.name ?? "Unknown"}</span>
       </p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {metricTabs.map((metric) => (
+          <Link
+            key={metric.key}
+            href={{ pathname: "/growth", query: { metric: metric.key } }}
+            className={`rounded-full border px-3 py-1 text-sm ${
+              growthMetric === metric.key
+                ? "border-foreground bg-foreground text-background"
+                : "border-border text-foreground/80"
+            }`}
+          >
+            {metric.label}
+          </Link>
+        ))}
+      </div>
 
       <section className="henrii-card">
         <h2 className="font-heading text-xl font-semibold">{t("logGrowthTitle")}</h2>
@@ -260,19 +534,19 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
         {measurements && measurements.length > 0 ? (
           <ul className="mt-4 space-y-2">
             {measurements.map((item) => (
-              <li
-                key={item.id}
-                className="rounded-xl border border-border/70 px-3 py-2 text-sm"
-              >
-                <p className="font-medium">
-                  {item.measured_at} · {formatWeight(item.weight_kg, unitSystem)} ·{" "}
-                  {formatLength(item.length_cm, unitSystem)} ·{" "}
-                  {formatLength(item.head_circumference_cm, unitSystem)}
-                </p>
+                <li
+                  key={item.id}
+                  className="rounded-xl border border-border/70 px-3 py-2 text-sm"
+                >
+                  <p className="font-medium">
+                    {item.measured_at} · {formatWeight(extractWeightKg(item), unitSystem)} ·{" "}
+                    {formatLength(extractLengthCm(item), unitSystem)} ·{" "}
+                    {formatLength(extractHeadCm(item), unitSystem)}
+                  </p>
                 <p className="text-xs text-muted-foreground">
-                  {t("percentiles")}: {t("weightShort")} {item.weight_percentile?.toFixed?.(1) ?? "—"} ·{" "}
-                  {t("lengthShort")} {item.length_percentile?.toFixed?.(1) ?? "—"} ·{" "}
-                  {t("headShort")} {item.head_percentile?.toFixed?.(1) ?? "—"}
+                  {t("percentiles")}: {t("weightShort")} {formatPercentile(item.weight_percentile)} ·{" "}
+                  {t("lengthShort")} {formatPercentile(item.length_percentile)} ·{" "}
+                  {t("headShort")} {formatPercentile(item.head_percentile)}
                 </p>
                 {item.notes ? <p className="text-xs text-muted-foreground">{item.notes}</p> : null}
               </li>
@@ -288,9 +562,13 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
         labels={{
           title: t("percentileChartTitle"),
           subtitle: t("percentileChartBody"),
-          weight: t("weightLabel"),
-          length: t("lengthLabel"),
-          head: t("headLabel"),
+          valueSeriesLabel: valueLabel,
+          unit: chartUnit,
+          p3: t("p3"),
+          p15: t("p15"),
+          p50: t("p50"),
+          p85: t("p85"),
+          p97: t("p97"),
           empty: t("emptyGrowth"),
         }}
       />

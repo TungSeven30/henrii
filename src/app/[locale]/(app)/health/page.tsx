@@ -1,7 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { AppointmentAttachmentUploader } from "@/components/health/appointment-attachment-uploader";
+import { Link } from "@/i18n/navigation";
 import { getBabyPremiumStatus } from "@/lib/billing/baby-plan";
 import { getActiveBabyContext } from "@/lib/supabase/get-active-baby-context";
+import { Calendar, Ruler, Syringe, Star } from "lucide-react";
 import {
   createAppointmentAction,
   markVaccinationCompletedAction,
@@ -19,6 +21,33 @@ type HealthPageProps = {
 };
 
 export const dynamic = "force-dynamic";
+
+const healthCards = [
+  {
+    href: "/vaccinations" as const,
+    icon: Syringe,
+    labelKey: "vaccinations" as const,
+    subtitleKey: "vaccinationsSubtitle" as const,
+  },
+  {
+    href: "/growth" as const,
+    icon: Ruler,
+    labelKey: "growth" as const,
+    subtitleKey: "growthSubtitle" as const,
+  },
+  {
+    href: "/milestones" as const,
+    icon: Star,
+    labelKey: "milestones" as const,
+    subtitleKey: "milestonesSubtitle" as const,
+  },
+  {
+    href: "/appointments" as const,
+    icon: Calendar,
+    labelKey: "appointments" as const,
+    subtitleKey: "appointmentsSubtitle" as const,
+  },
+] as const;
 
 function getHealthFeedback(query: {
   error?: string;
@@ -123,6 +152,21 @@ export default async function HealthPage({ params, searchParams }: HealthPagePro
       <p className="henrii-subtitle">
         {t("forBaby")}: <span className="font-semibold text-foreground">{baby?.name ?? "Unknown"}</span>
       </p>
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        {healthCards.map((card) => (
+          <Link
+            key={card.href}
+            href={card.href}
+            className="rounded-xl border border-border/70 bg-card px-3 py-3 text-left"
+          >
+            <div className="mb-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+              <card.icon className="h-4 w-4" />
+            </div>
+            <p className="text-sm font-medium">{t(card.labelKey)}</p>
+            <p className="text-xs text-muted-foreground">{t(card.subtitleKey)}</p>
+          </Link>
+        ))}
+      </div>
 
       <section className="henrii-card">
         <h2 className="font-heading text-xl font-semibold">{t("vaccinations")}</h2>

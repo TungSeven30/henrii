@@ -1,0 +1,22 @@
+<svg width="1440" height="900" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pastel hero background">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FDF6F0"/>
+      <stop offset="55%" stop-color="#FFFDF8"/>
+      <stop offset="100%" stop-color="#EFF6FF"/>
+    </linearGradient>
+    <radialGradient id="blobA" cx="0.15" cy="0.12" r="0.36">
+      <stop offset="0%" stop-color="#F8B4C8" stop-opacity="0.56"/>
+      <stop offset="100%" stop-color="#F8B4C8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blobB" cx="0.82" cy="0.82" r="0.42">
+      <stop offset="0%" stop-color="#B4D8F8" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#B4D8F8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1440" height="900" fill="url(#bg)"/>
+  <circle cx="300" cy="180" r="300" fill="url(#blobA)"/>
+  <circle cx="1180" cy="680" r="320" fill="url(#blobB)"/>
+  <circle cx="720" cy="120" r="150" fill="#F4D4A7" fill-opacity="0.28"/>
+  <path d="M0 820C250 790 470 860 760 835C980 816 1180 760 1440 780V900H0V820Z" fill="#FFFFFF" fill-opacity="0.46"/>
+</svg>

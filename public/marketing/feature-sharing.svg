@@ -1,0 +1,27 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F9FAFF"/>
+      <stop offset="100%" stop-color="#FDF2F8"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" fill="url(#bg)"/>
+  <path d="M80 520C130 452 204 420 280 420h80c76 0 150 32 200 100" stroke="#F8B4C8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M560 520C510 452 436 420 360 420h-80" stroke="#B4D8F8" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="248" cy="248" r="78" fill="#FFF" stroke="#F8B4C8" stroke-width="8"/>
+  <circle cx="392" cy="248" r="78" fill="#FFF" stroke="#B4D8F8" stroke-width="8"/>
+  <circle cx="520" cy="248" r="78" fill="#FFF" stroke="#FCD34D" stroke-width="8"/>
+  <circle cx="120" cy="248" r="78" fill="#FFF" stroke="#86EFAC" stroke-width="8"/>
+  <text x="248" y="252" font-size="24" text-anchor="middle" fill="#334155" font-family="system-ui, -apple-system">You</text>
+  <text x="392" y="252" font-size="24" text-anchor="middle" fill="#334155" font-family="system-ui, -apple-system">Mom</text>
+  <text x="520" y="252" font-size="24" text-anchor="middle" fill="#334155" font-family="system-ui, -apple-system">Dad</text>
+  <text x="120" y="252" font-size="24" text-anchor="middle" fill="#334155" font-family="system-ui, -apple-system">Nanny</text>
+  <line x1="248" y1="326" x2="392" y2="326" stroke="#CBD5F5" stroke-width="6" stroke-linecap="round"/>
+  <line x1="392" y1="326" x2="392" y2="326" stroke="#CBD5F5" stroke-width="6" stroke-linecap="round"/>
+  <line x1="392" y1="326" x2="520" y2="326" stroke="#CBD5F5" stroke-width="6" stroke-linecap="round"/>
+  <line x1="120" y1="326" x2="248" y2="326" stroke="#CBD5F5" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="248" cy="400" r="34" fill="#F8FAFC"/>
+  <text x="248" y="408" text-anchor="middle" font-size="22" fill="#334155" font-family="system-ui, -apple-system">+2</text>
+  <rect x="320" y="466" width="180" height="36" rx="18" fill="#F8FAFC" stroke="#CBD5F5"/>
+  <text x="410" y="490" text-anchor="middle" font-size="18" fill="#475569" font-family="system-ui, -apple-system">Share logs instantly</text>
+</svg>

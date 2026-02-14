@@ -610,10 +610,13 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
               return (
                 <li key={item.id} className="rounded-xl border border-border/70 p-3">
                   <div className="flex gap-3">
-                    <div className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border ${iconContainerClass}`}>
+                    <div
+                      className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border ${iconContainerClass}`}
+                      title={item.milestone_key}
+                    >
                       <MilestoneItemArtwork
                         milestoneKey={item.milestone_key}
-                        className={`h-6 w-6 ${iconClass}`}
+                        className={`h-7 w-7 ${iconClass}`}
                       />
                     </div>
                     <div className="min-w-0 flex-1">

@@ -236,7 +236,78 @@ export function MilestoneItemArtwork({
   milestoneKey,
   ...props
 }: MilestoneItemArtworkProps) {
-  switch (milestoneKey) {
+  const normalized = milestoneKey.trim().toLowerCase();
+  const suffix = normalized.split(".").pop() ?? normalized;
+
+  if (
+    ["roll_over", "roll-over", "rollover", "rollover_baby", "roll over"].includes(suffix)
+  ) {
+    return <RollOverArtwork {...props} />;
+  }
+
+  if (
+    [
+      "sit_without_support",
+      "sit-without-support",
+      "sits_without_support",
+      "sit",
+      "sit_up",
+      "situp",
+    ].includes(suffix)
+  ) {
+    return <SitWithoutSupportArtwork {...props} />;
+  }
+
+  if (["crawl", "crawling", "crawlbaby", "crawl_baby"].includes(suffix)) {
+    return <CrawlArtwork {...props} />;
+  }
+
+  if (
+    [
+      "walk_independent",
+      "walk_independently",
+      "walk_independently_support",
+      "walk",
+      "walks_independently",
+      "independent_walk",
+    ].includes(suffix)
+  ) {
+    return <WalkIndependentArtwork {...props} />;
+  }
+
+  if (["cooing", "coos_and_gurgles", "coos", "vocalization"].includes(suffix)) {
+    return <CooingArtwork {...props} />;
+  }
+
+  if (["babbling", "baby_babbling", "word_sounds", "sound_sounds"].includes(suffix)) {
+    return <BabblingArtwork {...props} />;
+  }
+
+  if (["first_word", "first_words", "say_first_words", "speaks"].includes(suffix)) {
+    return <FirstWordArtwork {...props} />;
+  }
+
+  if (["social_smile", "socialsmile", "smile", "socially_smile"].includes(suffix)) {
+    return <SocialSmileArtwork {...props} />;
+  }
+
+  if (["responds_to_name", "respond_to_name", "turns_to_name", "name_response"].includes(suffix)) {
+    return <RespondsToNameArtwork {...props} />;
+  }
+
+  if (
+    [
+      "object_permanence",
+      "object permanence",
+      "object_permanency",
+      "persistence_object",
+      "search_hidden_objects",
+    ].includes(suffix)
+  ) {
+    return <ObjectPermanenceArtwork {...props} />;
+  }
+
+  switch (normalized) {
     case "motor.roll_over":
       return <RollOverArtwork {...props} />;
     case "motor.sit_without_support":

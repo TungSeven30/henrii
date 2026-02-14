@@ -13,9 +13,12 @@ type Params = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale, slug } = await params;
-  const post = getMarketingBlogPost(locale, slug);
+  const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
+  const post = getMarketingBlogPost(locale, normalizedSlug);
 
   if (!post) {
     return {
@@ -77,8 +80,9 @@ function formatDate(rawDate: string, locale: string) {
 
 export default async function BlogPostPage({ params }: Params) {
   const { locale, slug } = await params;
+  const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
   const t = await getTranslations("marketing.blog");
-  const post = getMarketingBlogPost(locale, slug);
+  const post = getMarketingBlogPost(locale, normalizedSlug);
 
   if (!post) {
     notFound();
@@ -86,7 +90,7 @@ export default async function BlogPostPage({ params }: Params) {
 
   const body = getPostBody(post, locale);
   const related = getMarketingBlogPosts()
-    .filter((candidate) => candidate.slug !== slug)
+    .filter((candidate) => candidate.slug !== normalizedSlug)
     .slice(0, 2);
 
   return (

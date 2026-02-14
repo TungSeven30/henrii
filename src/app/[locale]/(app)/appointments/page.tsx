@@ -12,6 +12,7 @@ type AppointmentAttachmentRow = {
   mime_type: string | null;
   size_bytes: number;
   file_path: string;
+  uploaded_by: string;
 };
 
 type AppointmentRow = {
@@ -25,7 +26,7 @@ type AppointmentRow = {
   notes: string | null;
   reminder_hours_before: number;
   reminder_sent_at: string | null;
-  status: string;
+  status: "completed" | "scheduled" | "cancelled";
   created_at: string;
   updated_at: string;
   appointment_attachments: AppointmentAttachmentRow[] | null;
@@ -67,7 +68,15 @@ export default async function AppointmentsPage({ params }: AppointmentsPageProps
     getBabyPremiumStatus({ supabase, babyId: activeBabyId }),
   ]);
 
-  const appointments: AppointmentRow[] = appointmentsData ?? [];
+  const normalizedStatus = (value: string): AppointmentRow["status"] =>
+    value === "completed" || value === "cancelled" || value === "scheduled"
+      ? value
+      : "scheduled";
+
+  const appointments: AppointmentRow[] = (appointmentsData ?? []).map((row) => ({
+    ...row,
+    status: normalizedStatus(row.status),
+  }));
 
   return (
     <AppointmentsContent

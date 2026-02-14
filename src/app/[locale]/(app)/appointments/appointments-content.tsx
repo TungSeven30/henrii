@@ -738,7 +738,7 @@ function VisitPrepCard({
           .lte("changed_at", now),
         supabase
           .from("growth_measurements")
-          .select("weight_grams, weight_kg, weight_percentile, measured_at")
+          .select("weight_kg, weight_percentile, measured_at")
           .eq("baby_id", babyId)
           .gte("measured_at", sinceDate)
           .order("measured_at", { ascending: true }),
@@ -762,33 +762,21 @@ function VisitPrepCard({
 
       const growthData = growthRes.data ?? [];
       const firstWeightRaw = growthData.find((measurement) => {
-        const grams = measurement.weight_grams;
         const kilos = measurement.weight_kg;
-        return (
-          Number(grams) > 0 ||
-          Number(kilos) > 0
-        );
+        return Number(kilos) > 0;
       });
       const lastWeightRaw = [...growthData]
         .reverse()
         .find((measurement) => {
-          const grams = measurement.weight_grams;
           const kilos = measurement.weight_kg;
-          return (
-            Number(grams) > 0 ||
-            Number(kilos) > 0
-          );
+          return Number(kilos) > 0;
         });
 
       const weightStart = firstWeightRaw
-        ? Number(firstWeightRaw.weight_kg) > 0
-          ? Number(firstWeightRaw.weight_kg) * 1000
-          : Number(firstWeightRaw.weight_grams)
+        ? Number(firstWeightRaw.weight_kg) * 1000
         : null;
       const weightEnd = lastWeightRaw
-        ? Number(lastWeightRaw.weight_kg) > 0
-          ? Number(lastWeightRaw.weight_kg) * 1000
-          : Number(lastWeightRaw.weight_grams)
+        ? Number(lastWeightRaw.weight_kg) * 1000
         : null;
 
       setPrepData({

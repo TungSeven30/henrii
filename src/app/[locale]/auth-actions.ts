@@ -139,7 +139,7 @@ export async function createBabyProfileAction(formData: FormData) {
       owner_id: user.id,
       name,
       date_of_birth: dateOfBirth,
-      sex,
+      sex: sex || undefined,
       country_code: countryCode,
       timezone,
     })
@@ -221,7 +221,7 @@ export async function updateBabyProfileAction(formData: FormData) {
     .update({
       name,
       date_of_birth: dateOfBirth,
-      sex,
+      sex: sex || undefined,
       country_code: countryCode,
       timezone,
     })

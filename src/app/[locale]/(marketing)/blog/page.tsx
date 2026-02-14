@@ -65,12 +65,12 @@ export default async function MarketingBlogPage({ params }: Props) {
               <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
               <p className="mt-4 text-xs text-muted-foreground">{post.author}</p>
               <div className="mt-4">
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="inline-flex text-sm font-medium text-primary hover:text-primary/80"
-                >
-                  {t("readMore")}
-                </Link>
+              <Link
+                href={`/blog/${post.slug}`}
+                className="inline-flex text-sm font-medium text-primary hover:text-primary/80"
+              >
+                {t("readMore")}
+              </Link>
               </div>
             </div>
           </article>

@@ -140,7 +140,7 @@ export function BabyForm({ baby }: BabyFormProps) {
       const payload = {
         name: values.name,
         date_of_birth: values.date_of_birth,
-        sex: values.sex ?? null,
+        sex: values.sex ?? undefined,
         country_code: values.country_code,
         timezone: values.timezone,
         photo_url: photoUrl,

@@ -57,6 +57,15 @@ async function updateSession(request: NextRequest) {
 export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  const localeSiteMatch = pathname.match(/^\/(en|vi)\/site(\/.*)?$/);
+  if (localeSiteMatch) {
+    const locale = localeSiteMatch[1];
+    const tail = localeSiteMatch[2] ?? "";
+    const url = request.nextUrl.clone();
+    url.pathname = tail ? `/${locale}${tail}` : `/${locale}`;
+    return NextResponse.redirect(url);
+  }
+
   if (pathname.startsWith("/api")) {
     return NextResponse.next();
   }

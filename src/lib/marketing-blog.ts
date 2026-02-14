@@ -13,6 +13,10 @@ export type MarketingBlogPost = {
   bodyVi: string;
 };
 
+function normalizeSlug(value: string) {
+  return decodeURIComponent(value).trim().toLowerCase();
+}
+
 const FALLBACK_COVER =
   "https://private-us-east-1.manuscdn.com/sessionFile/Yqb0N7s7iBUqXrW0bKMS7H/sandbox/TgpJhJHjbsgWGFMxeIbOfd-img-1_1770730425000_na1fn_YmxvZy1jb3Zlci13aHktd2UtYnVpbHQ.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWXFiME43czdpQlVxWHJXMGJLTVM3SC9zYW5kYm94L1RncEpoSkhqYnNnV0dGTXhlSWJPZmQtaW1nLTFfMTc3MDczMDQyNTAwMF9uYTFmbl9ZbXh2WnkxamIzWmxjaTEzYUhrdGQyVXRZblZwYkhRLnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=TAcYBvg7mOPfA9~yh6aubCdN0isG1v0Ife3~Xpl3lAJlrr5NW7mOOeP~bEMz-p-fkue3~TiuDofy5JJJnAem2TPjjoJdOwxiXuFz6VzyiP5u46VSNqTkNQ2ipvACoMFFH6BpTfGB3E3vV044GQ4Esa0dOxZiK6YGgXq~M7f7IHQSLW21CKYP1Ab1clkuC~0VlbCyqDxoFJ3DUzByEFqp8dD5SYQQN~aP6qvv8QCAIhetDDQrDsg5-Q2ZkDxVxXTYWMitDr1hOWK9TmCNIGV6MjGsV5atfB1qfhddi67ULC370PfpkbhbCN1WxJL4sB4llT3dE8-ZgNTwNdYCkRtZuQ__";
 
@@ -331,7 +335,9 @@ export function getMarketingBlogPost(
   locale: string,
   slug: string,
 ): MarketingBlogPost | undefined {
-  return getMarketingBlogPosts().find((post) => post.slug === slug);
+  const normalizedSlug = normalizeSlug(slug);
+
+  return getMarketingBlogPosts().find((post) => normalizeSlug(post.slug) === normalizedSlug);
 }
 
 export function getPostBody(post: MarketingBlogPost, locale: string): string {

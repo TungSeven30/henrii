@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { CSSProperties } from "react";
 
 type SafeImageProps = {
   src: string;
@@ -8,6 +9,7 @@ type SafeImageProps = {
   alt: string;
   className?: string;
   loading?: "lazy" | "eager";
+  style?: CSSProperties;
 };
 
 export function SafeImage({
@@ -16,6 +18,7 @@ export function SafeImage({
   alt,
   className,
   loading = "lazy",
+  style,
 }: SafeImageProps) {
   const [source, setSource] = useState(src);
 
@@ -25,6 +28,7 @@ export function SafeImage({
       alt={alt}
       className={className}
       loading={loading}
+      style={style}
       onError={() => setSource(fallbackSrc)}
     />
   );

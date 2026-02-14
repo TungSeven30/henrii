@@ -15,26 +15,27 @@ export function VaccinationArtwork(props: SVGProps<SVGSVGElement>) {
         width="28"
         height="44"
         rx="14"
-        className="stroke-current/90"
+        fill="none"
+        stroke="currentColor"
         strokeWidth="4"
         strokeLinejoin="round"
       />
       <path
         d="M31 4v10M33 4v10"
-        className="stroke-current/80"
+        stroke="currentColor"
         strokeWidth="4"
         strokeLinecap="round"
       />
       <path
         d="M25 20c1.2 3.8 2.5 8 8 8s6.8-4.2 8-8"
-        className="stroke-current/75"
+        stroke="currentColor"
         strokeWidth="4"
         strokeLinecap="round"
       />
-      <circle cx="32" cy="35" r="8" className="fill-current/12" />
+      <circle cx="32" cy="35" r="8" fill="currentColor" fillOpacity={0.12} />
       <path
         d="M28 35l3 3 7-7"
-        className="stroke-current/95"
+        stroke="currentColor"
         strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -170,4 +171,3 @@ export type HealthFeatureCardConfig = {
   gradient: string;
   iconColor: string;
 };
-

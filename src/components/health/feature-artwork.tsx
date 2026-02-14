@@ -216,6 +216,300 @@ export function MilestoneArtwork(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export type MilestoneKey =
+  | "motor.roll_over"
+  | "motor.sit_without_support"
+  | "motor.crawl"
+  | "motor.walk_independent"
+  | "language.cooing"
+  | "language.babbling"
+  | "language.first_word"
+  | "social.social_smile"
+  | "social.responds_to_name"
+  | "cognitive.object_permanence";
+
+export type MilestoneItemArtworkProps = SVGProps<SVGSVGElement> & {
+  milestoneKey: string;
+};
+
+export function MilestoneItemArtwork({
+  milestoneKey,
+  ...props
+}: MilestoneItemArtworkProps) {
+  switch (milestoneKey) {
+    case "motor.roll_over":
+      return <RollOverArtwork {...props} />;
+    case "motor.sit_without_support":
+      return <SitWithoutSupportArtwork {...props} />;
+    case "motor.crawl":
+      return <CrawlArtwork {...props} />;
+    case "motor.walk_independent":
+      return <WalkIndependentArtwork {...props} />;
+    case "language.cooing":
+      return <CooingArtwork {...props} />;
+    case "language.babbling":
+      return <BabblingArtwork {...props} />;
+    case "language.first_word":
+      return <FirstWordArtwork {...props} />;
+    case "social.social_smile":
+      return <SocialSmileArtwork {...props} />;
+    case "social.responds_to_name":
+      return <RespondsToNameArtwork {...props} />;
+    case "cognitive.object_permanence":
+      return <ObjectPermanenceArtwork {...props} />;
+    default:
+      return <RollOverArtwork {...props} />;
+  }
+}
+
+function RollOverArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="18" y="14" width="28" height="24" rx="8" fill="#fef3c7" />
+      <path d="M22 26h20" stroke="#0f172a" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="29" cy="18" r="6" fill="#bfdbfe" />
+      <path
+        d="M27 15c0-2.4 2-4 4-4 1 0 2 .3 2.7 1.1"
+        stroke="#0f172a"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path d="M28 23c1.2 1.9 3 3.3 5.5 3.3" stroke="#166534" strokeWidth="2.2" />
+      <path d="M20 32c3.5 2.7 8 2.7 11.5 0" stroke="#0f172a" strokeWidth="2.5" />
+      <path d="M32 18l4 2 5-1.5" stroke="#7c3aed" strokeWidth="2.6" fill="none" />
+      <circle cx="24" cy="18" r="1.2" fill="#0f172a" />
+      <circle cx="34" cy="18" r="1.2" fill="#0f172a" />
+    </svg>
+  );
+}
+
+function SitWithoutSupportArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="12" y="12" width="40" height="40" rx="10" fill="#dcfce7" />
+      <rect
+        x="19"
+        y="14"
+        width="26"
+        height="7"
+        rx="3.5"
+        fill="#fef3c7"
+        stroke="#0f172a"
+        strokeWidth="2"
+      />
+      <path d="M19 21l-4 11" stroke="#0f172a" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="30" cy="21" r="5" fill="#a5f3fc" />
+      <path
+        d="M26 21h8"
+        stroke="#0f172a"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path d="M29 21v9" stroke="#0f172a" strokeWidth="2" />
+      <path d="M18 42h20" stroke="#15803d" strokeWidth="2.5" />
+      <path d="M22 42h11" stroke="#22c55e" strokeWidth="2.8" />
+      <path d="M26 34c-1.6 0-2.8 1-2.8 2.6" stroke="#0f172a" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function CrawlArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="10" y="14" width="44" height="30" rx="10" fill="#ede9fe" />
+      <path
+        d="M14 34c3-6 7-11 15-11s12 5 15 11"
+        stroke="#7c3aed"
+        strokeWidth="2.8"
+        strokeLinecap="round"
+      />
+      <circle cx="18" cy="20" r="5" fill="#fef08a" />
+      <circle cx="32" cy="26" r="3.8" fill="#bbf7d0" />
+      <circle cx="45" cy="20" r="5" fill="#fca5a5" />
+      <path d="M18 20h27M21 24h4M38 24h4" stroke="#0f172a" strokeWidth="1.8" />
+      <path d="M18 25c-1-1.8 0-3.8 2.5-4.5" fill="none" stroke="#0f172a" strokeWidth="1.8" />
+      <path d="M45 24c1.3-1.7 0.8-3.9-1.5-4.8" fill="none" stroke="#0f172a" strokeWidth="1.8" />
+      <path d="M45 28c-3 2.2-6 3.6-9.6 3.8" stroke="#0f172a" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+function WalkIndependentArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="11" y="20" width="42" height="22" rx="10" fill="#ffedd5" />
+      <rect
+        x="19"
+        y="16"
+        width="26"
+        height="12"
+        rx="6"
+        fill="#fef3c7"
+        stroke="#0f172a"
+        strokeWidth="2"
+      />
+      <circle cx="30" cy="20" r="5.5" fill="#fde68a" />
+      <path d="M27 19.5h6M27 22h6" stroke="#0f172a" strokeWidth="1.8" />
+      <path d="M26 26l4-2 5 5 6-8" fill="none" stroke="#7c3aed" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M22 28v9M35 28v9" stroke="#0f172a" strokeWidth="2" strokeLinecap="round" />
+      <path d="M22 36l-2 6M35 36l3 6" stroke="#0f172a" strokeWidth="2.2" />
+      <path d="M17 32h30" stroke="#15803d" strokeWidth="2.5" />
+    </svg>
+  );
+}
+
+function CooingArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="12" y="12" width="40" height="40" rx="12" fill="#dbeafe" />
+      <circle cx="24" cy="31" r="10" fill="#93c5fd" />
+      <path
+        d="M16 23c2-5 8-7 12-4.5 2.5 1.4 3.8 4.1 3.8 6.8"
+        stroke="#0f172a"
+        strokeWidth="2"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path d="M27 24c.6.6 1.5 1.6 2.4 2.6.9 1 1.7 2 2.2 3" stroke="#1d4ed8" strokeWidth="1.8" fill="none" />
+      <circle cx="30" cy="27" r="1.2" fill="#0f172a" />
+      <path d="M30 35v4" stroke="#0f172a" strokeWidth="1.7" />
+      <path d="M37 24c2.2 0 4 2 4 4 0 1.7-1.1 3.2-2.7 3.8" stroke="#0f172a" strokeWidth="1.5" />
+      <path d="M31 23l.6 2.2m1.8-.2l-1.5 2" stroke="#f97316" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BabblingArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="8" y="13" width="48" height="40" rx="11" fill="#ede9fe" />
+      <path d="M14 30h18" stroke="#0f172a" strokeWidth="2.8" />
+      <circle cx="22" cy="20" r="6" fill="#f9a8d4" />
+      <circle cx="38" cy="22" r="5" fill="#fcd34d" />
+      <rect x="17" y="40" width="8" height="6" rx="2" fill="#f8fafc" />
+      <rect x="39" y="33" width="9" height="6" rx="2" fill="#e2e8f0" />
+      <path
+        d="M28 24c1.7.7 2.8 2.2 3.2 3.9-.6 1.9-2.4 3.6-4.6 3.7"
+        fill="none"
+        stroke="#0f172a"
+        strokeWidth="2.1"
+      />
+      <path
+        d="M30 42c.9-1 2-1.5 3.2-1.5M33 43.5c1.5-1.6 3.9-1.6 5.5 0"
+        stroke="#7c3aed"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path d="M43 20.5c.3-1.8 1.8-3.2 3.7-3.2" stroke="#0f172a" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+function FirstWordArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="10" y="12" width="44" height="42" rx="10" fill="#dcfce7" />
+      <path
+        d="M18 24h28M18 29h22M18 34h19"
+        stroke="#0f172a"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <rect x="21" y="17" width="12" height="8" rx="4" fill="#bbf7d0" />
+      <path
+        d="M35 17c3.5 0 6.5 2.6 6.5 6s-3 6-6.5 6c-1 0-2-.3-2.8-.8"
+        fill="none"
+        stroke="#16a34a"
+        strokeWidth="2.3"
+      />
+      <path d="M31 22l6 2-6 2" stroke="#16a34a" strokeWidth="1.8" />
+      <path d="M27.5 22l3 3m0 0-3 3" stroke="#0f172a" strokeWidth="1.5" />
+      <circle cx="46" cy="30" r="3" fill="#15803d" />
+      <path d="M44.5 30h3M45.9 28.6v2.8" stroke="white" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function SocialSmileArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="12" y="12" width="40" height="40" rx="12" fill="#fef9c3" />
+      <circle cx="32" cy="28" r="11" fill="#fcd34d" />
+      <circle cx="28" cy="24" r="1.8" fill="#111827" />
+      <circle cx="35" cy="24" r="1.8" fill="#111827" />
+      <path
+        d="M30.5 31.5c.9 1.3 2.5 2.1 4 2.1 1.5 0 2.9-.8 4-2.1"
+        stroke="#111827"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path d="M24 18h4" stroke="#16a34a" strokeWidth="2" />
+      <path d="M20 24l7 2-7 2" stroke="#16a34a" strokeWidth="2" />
+      <path d="M39 18l7 2-7 2" stroke="#16a34a" strokeWidth="2" />
+      <path d="M20 43h19" stroke="#166534" strokeWidth="2.5" />
+      <path d="M27 43h2M30 43h6" stroke="#22c55e" strokeWidth="2.8" />
+    </svg>
+  );
+}
+
+function RespondsToNameArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="11" y="12" width="42" height="40" rx="9" fill="#e0e7ff" />
+      <path d="M18 17c.8-2.5 3-4.2 5.7-4.2 1.4 0 2.7.5 3.7 1.4" stroke="#1d4ed8" strokeWidth="2" />
+      <path d="M25 19l11 2" stroke="#0f172a" strokeWidth="2" />
+      <circle cx="19" cy="29" r="7" fill="#bae6fd" />
+      <path d="M19 29v1" stroke="#0f172a" strokeWidth="1.8" />
+      <path d="M34 29c-1.4 0-3 1-3 2.7" fill="none" stroke="#0f172a" strokeWidth="2" />
+      <path
+        d="M40 14h-2.6v4.5h1v2h-3v2h3v2h-1v2h2.6M44 14h-2.6v4.5h1v2h-3v2h3v2h-1v2h2.6"
+        fill="none"
+        stroke="#7c3aed"
+        strokeWidth="1.5"
+      />
+      <path d="M14 40h26" stroke="#4338ca" strokeWidth="2.5" />
+      <path d="M14 42h34" stroke="#6366f1" strokeWidth="1.8" />
+      <path d="M24 35.5l5 3.8 5-3.8" stroke="#4f46e5" strokeWidth="1.7" fill="none" />
+      <circle cx="43" cy="28" r="3" fill="#ede9fe" />
+      <path d="M42.2 27.5c.4 0 .8.1 1 .5.2.5 0 1-.4 1.1" stroke="#0f172a" strokeWidth="1" fill="none" />
+    </svg>
+  );
+}
+
+function ObjectPermanenceArtwork(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseSvgProps} {...props}>
+      <rect x="10" y="12" width="44" height="40" rx="12" fill="#fef3c7" />
+      <rect x="24" y="12" width="3.6" height="32" fill="#92400e" />
+      <path
+        d="M26 14h8l2 2v13h-4v-10h-2v10h-4z"
+        fill="#fef08a"
+        stroke="#a16207"
+        strokeWidth="1.6"
+      />
+      <circle cx="33" cy="20" r="2" fill="#111827" />
+      <circle cx="39" cy="20" r="2.5" fill="#22c55e" />
+      <path d="M36 25l6 6h-6z" fill="#22c55e" />
+      <path d="M42 29l7 6" stroke="#0f172a" strokeWidth="2.3" />
+      <path
+        d="M26.4 31c-3.8-1-8 1.2-8.9 4.9s1.7 7.4 5.3 8.3"
+        stroke="#65a30d"
+        strokeWidth="2.2"
+        fill="none"
+      />
+      <path
+        d="M16 34h6"
+        stroke="#065f46"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      <path d="M42 43v-9.2" stroke="#16a34a" strokeWidth="2" />
+      <path d="M44 43v-8.3" stroke="#16a34a" strokeWidth="2" />
+      <circle cx="42" cy="31.8" r="1.5" fill="#16a34a" />
+    </svg>
+  );
+}
+
 export function AppointmentArtwork(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...baseSvgProps} {...props}>

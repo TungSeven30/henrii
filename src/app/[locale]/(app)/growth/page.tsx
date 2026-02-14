@@ -5,6 +5,7 @@ import {
   PercentileCurvesChart,
   type PercentileCurvePoint,
 } from "@/components/growth/percentile-curves-chart";
+import { MilestoneItemArtwork } from "@/components/health/feature-artwork";
 import { getActiveBabyContext } from "@/lib/supabase/get-active-baby-context";
 import { buildWHOCurveData, type GrowthMetricTab } from "@/lib/growth/who-percentile-curves";
 import {
@@ -593,53 +594,69 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
               const definition = item.milestone_definitions;
               const title =
                 locale === "vi" ? definition?.name_vi ?? item.milestone_key : definition?.name_en ?? item.milestone_key;
+              const iconColor =
+                item.status === "achieved"
+                  ? "text-emerald-700"
+                  : item.status === "emerging"
+                    ? "text-amber-600"
+                    : "text-muted-foreground";
 
               return (
                 <li key={item.id} className="rounded-xl border border-border/70 p-3">
-                  <p className="font-medium">{title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {definition?.category ?? "—"} · {definition?.typical_age_min_months ?? "?"}-
-                    {definition?.typical_age_max_months ?? "?"} {t("months")}
-                  </p>
-                  <form action={updateMilestoneStatusAction} className="mt-2 grid gap-2 sm:grid-cols-3">
-                    <input type="hidden" name="locale" value={locale} />
-                    <input type="hidden" name="milestoneId" value={item.id} />
-                    <label className="grid gap-1 text-xs">
-                      {t("status")}
-                      <select
-                        name="status"
-                        defaultValue={item.status}
-                        className="h-9 rounded-lg border border-border bg-background px-2 text-sm transition focus-visible:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
-                      >
-                        <option value="not_started">{t("statusNotStarted")}</option>
-                        <option value="emerging">{t("statusEmerging")}</option>
-                        <option value="achieved">{t("statusAchieved")}</option>
-                      </select>
-                    </label>
-                    <label className="grid gap-1 text-xs">
-                      {t("achievedAt")}
-                      <input
-                        name="achievedAt"
-                        type="date"
-                        defaultValue={item.achieved_at ?? ""}
-                        className="h-9 rounded-lg border border-border bg-background px-2 text-sm transition focus-visible:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
+                  <div className="flex gap-3">
+                    <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-secondary/50">
+                      <MilestoneItemArtwork
+                        milestoneKey={item.milestone_key}
+                        className={`h-5 w-5 ${iconColor}`}
                       />
-                    </label>
-                    <label className="grid gap-1 text-xs sm:col-span-3">
-                      {t("notes")}
-                      <input
-                        name="notes"
-                        defaultValue={item.notes ?? ""}
-                        className="h-9 rounded-lg border border-border bg-background px-2 text-sm transition focus-visible:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
-                      />
-                    </label>
-                    <button
-                      type="submit"
-                      className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-background px-3 text-xs font-semibold transition hover:bg-accent sm:col-span-3"
-                    >
-                      {t("saveMilestone")}
-                    </button>
-                  </form>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium">{title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {definition?.category ?? "—"} · {definition?.typical_age_min_months ?? "?"}-
+                        {definition?.typical_age_max_months ?? "?"} {t("months")}
+                      </p>
+                      <form action={updateMilestoneStatusAction} className="mt-2 grid gap-2 sm:grid-cols-3">
+                        <input type="hidden" name="locale" value={locale} />
+                        <input type="hidden" name="milestoneId" value={item.id} />
+                        <label className="grid gap-1 text-xs">
+                          {t("status")}
+                          <select
+                            name="status"
+                            defaultValue={item.status}
+                            className="h-9 rounded-lg border border-border bg-background px-2 text-sm transition focus-visible:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
+                          >
+                            <option value="not_started">{t("statusNotStarted")}</option>
+                            <option value="emerging">{t("statusEmerging")}</option>
+                            <option value="achieved">{t("statusAchieved")}</option>
+                          </select>
+                        </label>
+                        <label className="grid gap-1 text-xs">
+                          {t("achievedAt")}
+                          <input
+                            name="achievedAt"
+                            type="date"
+                            defaultValue={item.achieved_at ?? ""}
+                            className="h-9 rounded-lg border border-border bg-background px-2 text-sm transition focus-visible:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
+                          />
+                        </label>
+                        <label className="grid gap-1 text-xs sm:col-span-3">
+                          {t("notes")}
+                          <input
+                            name="notes"
+                            defaultValue={item.notes ?? ""}
+                            className="h-9 rounded-lg border border-border bg-background px-2 text-sm transition focus-visible:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
+                          />
+                        </label>
+                        <button
+                          type="submit"
+                          className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-background px-3 text-xs font-semibold transition hover:bg-accent sm:col-span-3"
+                        >
+                          {t("saveMilestone")}
+                        </button>
+                      </form>
+                    </div>
+                  </div>
                 </li>
               );
             })}

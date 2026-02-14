@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import { BabySwitcher } from "@/components/baby-switcher";
 import { LocaleNav } from "@/components/layout/locale-nav";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 
@@ -21,7 +22,9 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   return (
     <div className="min-h-dvh pb-20">
       <header className="sticky top-0 z-20 border-b border-border/40 bg-background/85 backdrop-blur-md">
-        <LocaleNav appName={common("appName")} items={navItems} brandHref="/dashboard" />
+        <LocaleNav appName={common("appName")} items={navItems} brandHref="/dashboard">
+          <BabySwitcher />
+        </LocaleNav>
       </header>
       {children}
       <MobileBottomNav

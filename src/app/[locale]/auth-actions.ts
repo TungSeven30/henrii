@@ -108,7 +108,10 @@ export async function createBabyProfileAction(formData: FormData) {
   const locale = getSafeLocale(formData.get("locale")?.toString() ?? null);
   const name = formData.get("name")?.toString().trim() ?? "";
   const dateOfBirth = formData.get("dateOfBirth")?.toString() ?? "";
-  const sex = formData.get("sex")?.toString() ?? "unknown";
+  const sex =
+    formData.get("sex")?.toString() === "female" || formData.get("sex")?.toString() === "male"
+      ? formData.get("sex")?.toString()
+      : null;
   const countryCode = formData.get("countryCode")?.toString() ?? "US";
   const timezone = formData.get("timezone")?.toString() ?? "UTC";
 
@@ -190,7 +193,8 @@ export async function updateBabyProfileAction(formData: FormData) {
   const babyId = formData.get("babyId")?.toString() ?? "";
   const name = formData.get("name")?.toString().trim() ?? "";
   const dateOfBirth = formData.get("dateOfBirth")?.toString() ?? "";
-  const sex = formData.get("sex")?.toString() ?? "unknown";
+  const sexInput = formData.get("sex")?.toString();
+  const sex = sexInput === "female" || sexInput === "male" ? sexInput : null;
   const countryCode = formData.get("countryCode")?.toString() ?? "US";
   const timezone = formData.get("timezone")?.toString() ?? "UTC";
 

@@ -73,10 +73,14 @@ const COMMON_TIMEZONES = [
   "Pacific/Auckland",
 ] as const;
 
+const allowedSexValues = ["male", "female"] as const;
+
 const babyFormSchema = z.object({
   name: z.string().min(1, "Required"),
   date_of_birth: z.string().min(1, "Required"),
-  sex: z.string().optional(),
+  sex: z
+    .enum(allowedSexValues)
+    .optional(),
   country_code: z.string().min(1, "Required"),
   timezone: z.string().min(1, "Required"),
 });
@@ -107,7 +111,7 @@ export function BabyForm({ baby }: BabyFormProps) {
     defaultValues: {
       name: baby?.name ?? "",
       date_of_birth: baby?.date_of_birth ?? "",
-      sex: baby?.sex ?? undefined,
+      sex: baby?.sex === "male" || baby?.sex === "female" ? baby.sex : undefined,
       country_code: baby?.country_code ?? "",
       timezone: baby?.timezone ?? detectedTimezone,
     },
@@ -136,7 +140,7 @@ export function BabyForm({ baby }: BabyFormProps) {
       const payload = {
         name: values.name,
         date_of_birth: values.date_of_birth,
-        sex: values.sex || "unknown",
+        sex: values.sex ?? null,
         country_code: values.country_code,
         timezone: values.timezone,
         photo_url: photoUrl,
@@ -285,10 +289,6 @@ export function BabyForm({ baby }: BabyFormProps) {
                 <SelectContent>
                   <SelectItem value="male">{t("genderBoy")}</SelectItem>
                   <SelectItem value="female">{t("genderGirl")}</SelectItem>
-                  <SelectItem value="other">{t("genderOther")}</SelectItem>
-                  <SelectItem value="unknown">
-                    {t("genderPreferNot")}
-                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

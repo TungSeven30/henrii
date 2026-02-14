@@ -1,5 +1,6 @@
 "use client";
 
+import { type ReactNode } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ type LocaleNavProps = {
   appName: string;
   items: NavItem[];
   brandHref?: string;
+  children?: ReactNode;
 };
 
 function isActivePath(pathname: string, href: string) {
@@ -24,7 +26,12 @@ function isActivePath(pathname: string, href: string) {
   return pathname === hrefPath || pathname.startsWith(`${hrefPath}/`);
 }
 
-export function LocaleNav({ appName, items, brandHref = "/" }: LocaleNavProps) {
+export function LocaleNav({
+  appName,
+  items,
+  brandHref = "/",
+  children,
+}: LocaleNavProps) {
   const pathname = usePathname();
 
   return (
@@ -52,6 +59,8 @@ export function LocaleNav({ appName, items, brandHref = "/" }: LocaleNavProps) {
           );
         })}
       </div>
+
+      {children ? <div className="ml-2 flex items-center">{children}</div> : null}
     </nav>
   );
 }

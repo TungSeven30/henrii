@@ -110,13 +110,12 @@ export default async function BabyProfilePage({ params, searchParams }: BabyProf
               {t("sex")}
               <select
                 name="sex"
-                defaultValue={baby.sex ?? "unknown"}
+                defaultValue={baby.sex === "male" || baby.sex === "female" ? baby.sex : ""}
                 className="henrii-select"
               >
-                <option value="unknown">Unknown</option>
+                <option value="">Select</option>
                 <option value="female">Female</option>
                 <option value="male">Male</option>
-                <option value="other">Other</option>
               </select>
             </label>
             <label className="grid gap-1 text-sm">

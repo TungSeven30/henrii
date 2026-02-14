@@ -759,13 +759,18 @@
       "features": "Features",
       "pricing": "Pricing",
       "faq": "FAQ",
+      "blog": "Blog",
       "login": "Log in",
-      "signup": "Get started"
+      "signup": "Get started",
+      "privacy": "Privacy",
+      "terms": "Terms"
     },
     "hero": {
       "headline": "Track tiny moments.",
       "subheadline": "A baby tracker that works when you can barely keep your eyes open. One hand. One tap. Done.",
-      "disclaimer": "Free to use. No credit card required."
+      "disclaimer": "Free to use. No credit card required.",
+      "badge": "Start in seconds",
+      "secondary_cta": "See features"
     },
     "problem": {
       "title": "It's 3am. You don't have six taps.",
@@ -806,24 +811,56 @@
       }
     },
     "name": {
+      "eyebrow": "Built to be calm at 3am",
       "title": "Why the name \"henrii\"?",
       "line1": "The app is named after my son, Henry.",
       "line2": "The double i in the name is our logo idea: parent and baby side by side.",
       "line3": "Built for parents who need support, not more complexity."
     },
+    "differentiators": {
+      "title": "What makes henrii different",
+      "offline": {
+        "title": "Offline-first",
+        "description": "Log events without wifi. Everything syncs when you get back online."
+      },
+      "darkMode": {
+        "title": "Scheduled dark mode",
+        "description": "The app dims on a bedtime schedule. One less flashbang at night feeds."
+      },
+      "caregivers": {
+        "title": "Caregiver support",
+        "description": "Invite trusted people to share logs and stay in sync across homes."
+      },
+      "pdf": {
+        "title": "PDF summary export",
+        "description": "Generate quick 30-day reports to bring meaningful context to pediatric visits."
+      },
+      "analytics": {
+        "title": "Insightful patterns",
+        "description": "See tendencies and averages without judgment, so you can make calmer decisions."
+      },
+      "bilingual": {
+        "title": "Bilingual experience",
+        "description": "English and Vietnamese, with more languages on the way."
+      }
+    },
     "howItWorks": {
       "title": "How it works",
+      "subtitle": "Three quick steps. One calm workflow.",
       "signup": {
         "title": "Sign up",
-        "description": "Create your free account in 30 seconds."
+        "description": "Create your free account in 30 seconds.",
+        "benefit": "No card required."
       },
       "profile": {
         "title": "Add your baby",
-        "description": "Enter their birthday and country. Vaccinations auto-populate."
+        "description": "Enter their birthday and country. Vaccinations auto-populate.",
+        "benefit": "Auto-schedule plus smart reminders."
       },
       "track": {
         "title": "Start tracking",
-        "description": "Tap the + button. Pick the event. Done."
+        "description": "Tap the + button. Pick the event. Done.",
+        "benefit": "Logs in under 3 seconds."
       }
     },
     "pricing": {
@@ -833,6 +870,7 @@
         "title": "Free",
         "price": "$0",
         "description": "Everything you need to start.",
+        "forever": "Forever",
         "tracking": "Feeding, sleep, and diaper tracking",
         "vaccination": "Vaccination tracker",
         "growth": "Growth logging",
@@ -850,7 +888,35 @@
         "pdf": "PDF export for pediatrician visits",
         "caregivers": "Caregiver invites (up to 5)",
         "attachments": "Appointment attachments"
+      },
+      "lifetime": {
+        "title": "Family Plan",
+        "price": "$99",
+        "badge": "One-time support",
+        "description": "Support us once and lock in future updates for one baby.",
+        "tagline": "No recurring subscriptions.",
+        "supportForTeam": "Support a small independent team",
+        "futureFeatures": "All future features included",
+        "prioritySupport": "Priority support and roadmap influence",
+        "longTermSupport": "No cancellations, no renewals"
       }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Parenting tips, product updates, and practical guides.",
+      "backToHome": "Back to home",
+      "readMore": "Read more",
+      "backToBlog": "Back to blog",
+      "categories": {
+        "all": "All",
+        "parenting": "Parenting",
+        "product": "Product",
+        "tips": "Tips"
+      },
+      "empty": "No posts yet. Check back soon.",
+      "keepReading": "Keep reading",
+      "postCtaTitle": "Want to try henrii?",
+      "postCtaText": "Create your free account and start tracking in under a minute."
     },
     "faq": {
       "title": "Frequently asked questions",
@@ -893,9 +959,10 @@
     },
     "footer": {
       "tagline": "Track tiny moments.",
+      "blog": "Blog",
       "privacy": "Privacy",
       "terms": "Terms",
-      "copyright": "© 2025 henrii. All rights reserved."
+      "copyright": "henrii. All rights reserved."
     }
   },
   "legal": {

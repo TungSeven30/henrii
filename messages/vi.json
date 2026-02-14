@@ -759,13 +759,18 @@
       "features": "Tính năng",
       "pricing": "Giá",
       "faq": "Câu hỏi",
+      "blog": "Blog",
       "login": "Đăng nhập",
-      "signup": "Bắt đầu"
+      "signup": "Bắt đầu",
+      "privacy": "Bảo mật",
+      "terms": "Điều khoản"
     },
     "hero": {
       "headline": "Ghi lại từng khoảnh khắc nhỏ.",
       "subheadline": "Ứng dụng theo dõi bé yêu hoạt động khi bạn gần như không thể mở mắt. Một tay. Một chạm. Xong.",
-      "disclaimer": "Miễn phí sử dụng. Không cần thẻ tín dụng."
+      "disclaimer": "Miễn phí sử dụng. Không cần thẻ tín dụng.",
+      "badge": "Bắt đầu trong vài giây",
+      "secondary_cta": "Xem tính năng"
     },
     "problem": {
       "title": "3 giờ sáng rồi. Bạn chẳng còn năng lượng cho 6 bước bấm.",
@@ -806,6 +811,7 @@
       }
     },
     "name": {
+      "eyebrow": "Xây cho bạn dễ thở vào 3 giờ sáng",
       "title": "Vì sao tên \"henrii\"?",
       "line1": "Ứng dụng lấy tên từ con trai tôi, Henry.",
       "line2": "Chữ ii kép là cách nói về một người lớn đứng cạnh bé trong mọi khoảnh khắc theo dõi.",
@@ -840,17 +846,21 @@
     },
     "howItWorks": {
       "title": "Cách sử dụng",
+      "subtitle": "Ba bước nhanh. Một quy trình thoải mái.",
       "signup": {
         "title": "Đăng ký",
-        "description": "Tạo tài khoản miễn phí trong 30 giây."
+        "description": "Tạo tài khoản miễn phí trong 30 giây.",
+        "benefit": "Không cần thẻ tín dụng."
       },
       "profile": {
         "title": "Thêm bé yêu",
-        "description": "Nhập ngày sinh và quốc gia. Lịch tiêm chủng tự động điền."
+        "description": "Nhập ngày sinh và quốc gia. Lịch tiêm chủng tự động điền.",
+        "benefit": "Tự động lên lịch và nhắc nhở thông minh."
       },
       "track": {
         "title": "Bắt đầu theo dõi",
-        "description": "Nhấn nút +. Chọn sự kiện. Xong."
+        "description": "Nhấn nút +. Chọn sự kiện. Xong.",
+        "benefit": "Hoàn thành trong chưa đến 3 giây."
       }
     },
     "pricing": {
@@ -860,6 +870,7 @@
         "title": "Miễn phí",
         "price": "0đ",
         "description": "Mọi thứ bạn cần để bắt đầu.",
+        "forever": "Mãi mãi",
         "tracking": "Theo dõi bú/ăn, giấc ngủ, và tã",
         "vaccination": "Theo dõi tiêm chủng",
         "growth": "Ghi nhận tăng trưởng",
@@ -877,7 +888,35 @@
         "pdf": "Xuất PDF cho buổi khám bác sĩ",
         "caregivers": "Mời người chăm sóc (tối đa 5)",
         "attachments": "Đính kèm tài liệu lịch khám"
+      },
+      "lifetime": {
+        "title": "Gói Gia đình",
+        "price": "99.000đ",
+        "badge": "Đóng góp một lần",
+        "description": "Ủng hộ đội ngũ độc lập và nhận quyền truy cập cập nhật tương lai cho một bé.",
+        "tagline": "Không có phí theo chu kỳ.",
+        "supportForTeam": "Ủng hộ nhóm phát triển độc lập",
+        "futureFeatures": "Bao gồm mọi tính năng trong tương lai",
+        "prioritySupport": "Hỗ trợ ưu tiên",
+        "longTermSupport": "Không hủy, không gia hạn"
       }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Mẹo nuôi dạy con, cập nhật sản phẩm và hướng dẫn thực tế.",
+      "backToHome": "Quay về trang chủ",
+      "readMore": "Xem thêm",
+      "backToBlog": "Quay về blog",
+      "categories": {
+        "all": "Tất cả",
+        "parenting": "Nuôi dạy con",
+        "product": "Sản phẩm",
+        "tips": "Mẹo"
+      },
+      "empty": "Chưa có bài viết. Quay lại sớm.",
+      "keepReading": "Đọc thêm",
+      "postCtaTitle": "Sẵn sàng thử henrii?",
+      "postCtaText": "Tạo tài khoản miễn phí và bắt đầu ghi nhận các khoảnh khắc quan trọng."
     },
     "faq": {
       "title": "Câu hỏi thường gặp",
@@ -920,9 +959,10 @@
     },
     "footer": {
       "tagline": "Ghi lại từng khoảnh khắc nhỏ.",
+      "blog": "Blog",
       "privacy": "Bảo mật",
       "terms": "Điều khoản",
-      "copyright": "© 2025 henrii. Bảo lưu mọi quyền."
+      "copyright": "henrii. Bảo lưu mọi quyền."
     }
   },
   "legal": {

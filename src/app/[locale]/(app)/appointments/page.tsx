@@ -6,6 +6,5 @@ type AppointmentsPageProps = {
 
 export default async function AppointmentsPage({ params }: AppointmentsPageProps) {
   const { locale } = await params;
-  redirect(`/${locale}/health`);
+  redirect(`/${locale}/health#appointments`);
 }
-

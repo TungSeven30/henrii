@@ -6,5 +6,5 @@ type VaccinationsPageProps = {
 
 export default async function VaccinationsPage(props: VaccinationsPageProps) {
   const { locale } = await props.params;
-  redirect(`/${locale}/health`);
+  redirect(`/${locale}/health#vaccinations`);
 }

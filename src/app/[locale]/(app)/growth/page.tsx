@@ -471,7 +471,7 @@ export default async function GrowthPage({ params, searchParams }: GrowthPagePro
         ))}
       </div>
 
-      <section className="henrii-card">
+      <section id="milestones" className="henrii-card">
         <h2 className="font-heading text-xl font-semibold">{t("logGrowthTitle")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("logGrowthBody")}</p>
 

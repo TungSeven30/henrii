@@ -11,12 +11,10 @@ type AppLayoutProps = {
 export default async function AppLayout({ children, params }: AppLayoutProps) {
   const { locale } = await params;
   const nav = await getTranslations({ locale, namespace: "nav" });
-  const dashboard = await getTranslations({ locale, namespace: "dashboard" });
   const common = await getTranslations({ locale, namespace: "common" });
 
   const navItems = [
-    { href: "/dashboard", label: nav("dashboard") },
-    { href: "/health", label: nav("health") },
+    { href: "/baby", label: nav("baby") },
     { href: "/settings", label: nav("settings") },
   ];
 
@@ -28,7 +26,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
       {children}
       <MobileBottomNav
         dashboardLabel={nav("dashboard")}
-        timelineLabel={dashboard("viewTimeline")}
+        timelineLabel={nav("timeline")}
         healthLabel={nav("health")}
         settingsLabel={nav("settings")}
       />

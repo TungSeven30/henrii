@@ -1,9 +1,15 @@
 import { getTranslations } from "next-intl/server";
 import { AppointmentAttachmentUploader } from "@/components/health/appointment-attachment-uploader";
+import {
+  AppointmentArtwork,
+  GrowthArtwork,
+  MilestoneArtwork,
+  VaccinationArtwork,
+  type HealthFeatureCardConfig,
+} from "@/components/health/feature-artwork";
 import { Link } from "@/i18n/navigation";
 import { getBabyPremiumStatus } from "@/lib/billing/baby-plan";
 import { getActiveBabyContext } from "@/lib/supabase/get-active-baby-context";
-import { Calendar, Ruler, Syringe, Star } from "lucide-react";
 import {
   createAppointmentAction,
   markVaccinationCompletedAction,
@@ -22,30 +28,38 @@ type HealthPageProps = {
 
 export const dynamic = "force-dynamic";
 
-const healthCards = [
+const healthCards: readonly HealthFeatureCardConfig[] = [
   {
     href: "/vaccinations" as const,
-    icon: Syringe,
+    artwork: VaccinationArtwork,
     labelKey: "vaccinations" as const,
     subtitleKey: "vaccinationsSubtitle" as const,
+    gradient: "from-henrii-amber/25 via-henrii-amber/15 to-henrii-amber/5",
+    iconColor: "text-henrii-amber",
   },
   {
     href: "/growth" as const,
-    icon: Ruler,
+    artwork: GrowthArtwork,
     labelKey: "growth" as const,
     subtitleKey: "growthSubtitle" as const,
+    gradient: "from-henrii-purple/25 via-henrii-purple/15 to-henrii-purple/5",
+    iconColor: "text-henrii-purple",
   },
   {
     href: "/milestones" as const,
-    icon: Star,
+    artwork: MilestoneArtwork,
     labelKey: "milestones" as const,
     subtitleKey: "milestonesSubtitle" as const,
+    gradient: "from-henrii-green/25 via-henrii-green/15 to-henrii-green/5",
+    iconColor: "text-henrii-green",
   },
   {
     href: "/appointments" as const,
-    icon: Calendar,
+    artwork: AppointmentArtwork,
     labelKey: "appointments" as const,
     subtitleKey: "appointmentsSubtitle" as const,
+    gradient: "from-henrii-blue/25 via-henrii-blue/15 to-henrii-blue/5",
+    iconColor: "text-henrii-blue",
   },
 ] as const;
 
@@ -152,15 +166,17 @@ export default async function HealthPage({ params, searchParams }: HealthPagePro
       <p className="henrii-subtitle">
         {t("forBaby")}: <span className="font-semibold text-foreground">{baby?.name ?? "Unknown"}</span>
       </p>
-      <div className="mt-3 grid grid-cols-2 gap-3">
+      <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
         {healthCards.map((card) => (
           <Link
             key={card.href}
             href={card.href}
-            className="rounded-xl border border-border/70 bg-card px-3 py-3 text-left"
+            className="rounded-xl border border-border/70 bg-card px-3 py-3 text-left transition-colors hover:border-foreground/30 hover:bg-card/90"
           >
-            <div className="mb-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-              <card.icon className="h-4 w-4" />
+            <div
+              className={`mb-2 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${card.gradient}`}
+            >
+              <card.artwork className={`h-6 w-6 ${card.iconColor}`} />
             </div>
             <p className="text-sm font-medium">{t(card.labelKey)}</p>
             <p className="text-xs text-muted-foreground">{t(card.subtitleKey)}</p>
@@ -168,7 +184,7 @@ export default async function HealthPage({ params, searchParams }: HealthPagePro
         ))}
       </div>
 
-      <section className="henrii-card">
+      <section id="vaccinations" className="henrii-card">
         <h2 className="font-heading text-xl font-semibold">{t("vaccinations")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("vaccinationsBody")}</p>
         <form action={seedVaccinationsAction} className="mt-4 flex flex-wrap items-end gap-3">
@@ -227,7 +243,7 @@ export default async function HealthPage({ params, searchParams }: HealthPagePro
         )}
       </section>
 
-      <section className="henrii-card">
+      <section id="appointments" className="henrii-card">
         <h2 className="font-heading text-xl font-semibold">{t("appointments")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("appointmentsBody")}</p>
         <form action={createAppointmentAction} className="mt-4 grid gap-3 sm:grid-cols-2">

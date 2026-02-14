@@ -6,5 +6,5 @@ type MilestonesPageProps = {
 
 export default async function MilestonesPage(props: MilestonesPageProps) {
   const { locale } = await props.params;
-  redirect(`/${locale}/growth`);
+  redirect(`/${locale}/growth#milestones`);
 }

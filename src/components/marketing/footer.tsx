@@ -6,7 +6,7 @@ export function MarketingFooter() {
   const t = useTranslations("marketing.footer");
 
   return (
-    <footer className="border-t border-border bg-card/20">
+    <footer className="border-t border-border bg-card/30">
       <div className="container py-10 md:py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left">

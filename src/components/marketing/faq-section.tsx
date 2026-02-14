@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { AnimateIn } from "./animate-in";
+import { ChevronDown } from "lucide-react";
 
 const FAQ_KEYS = [
   "whatIs",
@@ -28,13 +29,15 @@ export function FaqSection() {
           {FAQ_KEYS.map((key, i) => (
             <AnimateIn key={key} delay={i * 50}>
               <details className="group rounded-xl border border-border bg-card p-4 md:p-5">
-                <summary className="list-none cursor-pointer flex items-center justify-between gap-3 text-left text-sm md:text-base font-semibold text-foreground">
+                <summary className="list-none cursor-pointer flex items-center justify-between gap-3 text-left text-base md:text-lg font-semibold leading-tight text-foreground">
                   <span>{t(`${key}.question`)}</span>
-                  <span className="text-muted-foreground transition-transform duration-200 group-open:rotate-45">
-                    +
-                  </span>
+                  <ChevronDown
+                    size={18}
+                    className="shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+                    aria-hidden="true"
+                  />
                 </summary>
-                <p className="mt-3 text-sm md:text-base leading-relaxed text-muted-foreground">
+                <p className="mt-3 text-sm md:text-base leading-relaxed text-muted-foreground border-t border-border/60 pt-3">
                   {t(`${key}.answer`)}
                 </p>
               </details>

@@ -34,7 +34,7 @@ export function MarketingNavbar() {
           : "bg-background/85 backdrop-blur-md border-b border-border/40"
       }`}
     >
-      <nav className="container h-16 md:h-18 flex items-center justify-between">
+      <nav className="container h-16 md:h-18 flex items-center justify-between gap-4">
         <Link
           href="/"
           aria-label="henrii home"
@@ -44,14 +44,14 @@ export function MarketingNavbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-2 xl:gap-4">
-          <div className="flex items-center">
+          <div className="flex items-center gap-1 xl:gap-2">
             {NAV_LINKS.map(({ href, key }) => {
               if (href.startsWith("#")) {
                 return (
                   <a
                     key={key}
                     href={href}
-                    className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-card"
                   >
                     {t(key)}
                   </a>
@@ -62,7 +62,7 @@ export function MarketingNavbar() {
                 <Link
                   key={key}
                   href={href}
-                  className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-card"
                 >
                   {t(key)}
                 </Link>
@@ -70,7 +70,7 @@ export function MarketingNavbar() {
             })}
           </div>
 
-          <Button size="sm" asChild>
+          <Button size="sm" asChild className="rounded-full">
             <Link href="/signup">{t("signup")}</Link>
           </Button>
         </div>
@@ -93,7 +93,7 @@ export function MarketingNavbar() {
                   <a
                     key={key}
                     href={href}
-                    className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="block rounded-lg px-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors hover:bg-card"
                     onClick={() => setMenuOpen(false)}
                   >
                     {t(key)}
@@ -105,7 +105,7 @@ export function MarketingNavbar() {
                 <Link
                   key={key}
                   href={href}
-                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="block rounded-lg px-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors hover:bg-card"
                   onClick={() => setMenuOpen(false)}
                 >
                   {t(key)}

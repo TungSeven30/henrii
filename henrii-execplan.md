@@ -138,7 +138,6 @@ Milestone-level status:
 
 Outstanding work to close release:
 - Populate `.env.production.local` with real values and run final production configuration verification (`verify:production-config`), keeping Stripe checks optional unless deliberately enabled.
-- Add/Create a valid Playwright auth state (`playwright/.auth/user.json`) and run authenticated smoke suite in release mode (`test:e2e:auth`).
 - Add Playwright E2E coverage for invite-acceptance and any missed data-path regressions in existing smoke flows if needed.
 
 

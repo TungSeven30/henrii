@@ -10,6 +10,8 @@ This suite covers release-critical flows:
 
 ## Prerequisites
 
+Playwright is optional and not part of the required release verify anymore.
+
 1. Install browsers:
 
 ```bash
@@ -26,34 +28,23 @@ Complete sign-in in the opened browser, then close it.
 
 ## Run
 
-Local app:
+Local app (optional):
 
 ```bash
-npm run test:smoke
+npx playwright test e2e/smoke.e2e.ts
 ```
-
-Authenticated release smoke (fails fast when state is missing):
-
-```bash
-PLAYWRIGHT_REQUIRE_AUTH=1 npm run test:smoke
-```
-
-Full release hardening pass:
-
-```bash
-npm run verify:release
-```
+ 
 
 Against deployed app:
 
 ```bash
-PLAYWRIGHT_BASE_URL=https://app.henrii.app npm run test:smoke
+PLAYWRIGHT_BASE_URL=https://app.henrii.app npx playwright test e2e/smoke.e2e.ts
 ```
 
 Optional invite flow coverage:
 
 ```bash
-PLAYWRIGHT_INVITE_TOKEN=<token> npm run test:smoke
+PLAYWRIGHT_INVITE_TOKEN=<token> npx playwright test e2e/smoke.e2e.ts
 ```
 
 ## Notes

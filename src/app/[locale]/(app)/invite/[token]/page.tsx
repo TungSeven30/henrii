@@ -54,6 +54,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
             <input type="hidden" name="token" value={token} />
             <button
               type="submit"
+              data-testid="invite-accept"
               className="h-10 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground"
             >
               {t("accept")}

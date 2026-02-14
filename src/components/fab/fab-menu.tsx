@@ -101,6 +101,7 @@ export function FabMenu() {
       {/* FAB button */}
       <button
         onClick={handleFabTap}
+        data-testid="fab-open"
         className={cn(
           "fixed z-50 flex items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95",
           "size-14",
@@ -128,6 +129,7 @@ export function FabMenu() {
               <button
                 key={opt.key}
                 onClick={() => handleOptionTap(opt.key)}
+                data-testid={`fab-option-${opt.key}`}
                 className="flex flex-col items-center gap-2"
               >
                 <div

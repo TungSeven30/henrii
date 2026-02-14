@@ -294,7 +294,12 @@ export function FeedForm({ open, onOpenChange, initialData, onUpdated }: FeedFor
             />
           </div>
 
-          <Button type="submit" disabled={submitting} className="mt-2">
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="mt-2"
+            data-testid="feed-save"
+          >
             {submitting ? tCommon("loading") : tCommon("save")}
           </Button>
         </form>

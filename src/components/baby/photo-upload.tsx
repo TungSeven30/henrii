@@ -101,6 +101,7 @@ export const PhotoUpload = forwardRef<PhotoUploadHandle, PhotoUploadProps>(
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
+          data-testid="baby-photo-trigger"
           className="relative size-24 rounded-full overflow-hidden bg-muted flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           aria-label={displayUrl ? t("changePhoto") : t("uploadPhoto")}
         >
@@ -134,6 +135,7 @@ export const PhotoUpload = forwardRef<PhotoUploadHandle, PhotoUploadProps>(
           ref={inputRef}
           type="file"
           accept="image/*"
+          data-testid="baby-photo-input"
           className="hidden"
           onChange={handleFileChange}
         />

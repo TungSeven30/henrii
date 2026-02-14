@@ -397,6 +397,7 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
                     variant="destructive"
                     className="w-full mt-2"
                     disabled={submitting}
+                    data-testid="sleep-stop-timer"
                     onClick={handleStopTimer}
                   >
                     <Square className="size-4" />
@@ -410,6 +411,7 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
                     size="lg"
                     disabled={submitting || !activeBaby}
                     className="h-14 w-full text-base"
+                    data-testid="sleep-start-timer"
                     onClick={handleStartTimer}
                   >
                     <Play className="size-5" />
@@ -451,7 +453,12 @@ export function SleepForm({ open, onOpenChange, initialData, onUpdated }: SleepF
               <QualitySelector />
               <NotesField />
 
-              <Button type="submit" disabled={submitting} className="mt-2">
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="mt-2"
+                data-testid="sleep-save-manual"
+              >
                 {submitting ? tCommon("loading") : tCommon("save")}
               </Button>
             </form>

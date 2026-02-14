@@ -37,7 +37,7 @@ Status snapshot date: 2026-02-14 (branch: `security-merge`, head: `87d5b98`)
 - [x] PDF export for pediatrician visits
 - [x] Freemium paywall gating
 - [x] Landing page with waitlist
-- [ ] Testing (Vitest/unit+API coverage complete; Playwright E2E coverage pending)
+- [ ] Testing (Vitest/unit+API coverage complete; Playwright smoke suite implemented, authenticated CI/runtime execution pending)
 - [x] Vercel deployment + CI/CD (GitHub Actions + Vercel workflow present; production env parity still needs operational checks)
 
 
@@ -595,8 +595,11 @@ Scope: Stripe billing, feature gating, marketing landing page, UX polish. At the
   - Baby photo upload.
   - Offline queue replay.
   - Caregiver invite accept flow.
+- Status (2026-02-14):
+  - Implemented in `e2e/smoke.e2e.ts` with Playwright config and artifact retention.
+  - Remaining: run authenticated smoke in CI/deployed env and mark green.
 - Exit criteria:
-  - Smoke suite runs in CI (or dedicated workflow) and is green.
+  - Smoke suite runs in CI (or dedicated workflow) with authenticated state and is green.
   - Failures produce artifacts (trace/screenshot/video).
 
 ### Phase 2 — Production Hardening (Priority: P1)

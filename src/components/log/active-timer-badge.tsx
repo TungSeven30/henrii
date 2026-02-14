@@ -51,6 +51,7 @@ function TimerChip({ type, startedAt, onClick }: TimerChipProps) {
   return (
     <button
       onClick={onClick}
+      data-testid={`active-timer-chip-${type}`}
       className="flex items-center gap-1.5 rounded-full bg-henrii-green/15 px-2.5 py-1 transition-colors hover:bg-henrii-green/25"
     >
       <span className="relative flex size-2">
@@ -189,6 +190,7 @@ function TimerDetailCard({
       <Button
         variant="destructive"
         size="sm"
+        data-testid={`active-timer-stop-${type}`}
         onClick={() => onStop(id, type)}
         className="shrink-0"
       >

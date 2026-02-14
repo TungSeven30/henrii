@@ -3,6 +3,7 @@ import { MarketingNavbar } from "@/components/marketing/navbar";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { ProblemSection } from "@/components/marketing/problem-section";
 import { TrackingSection } from "@/components/marketing/tracking-section";
+import { HowItWorksSection } from "@/components/marketing/how-it-works-section";
 import { PricingSection } from "@/components/marketing/pricing-section";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { CtaSection } from "@/components/marketing/cta-section";
@@ -36,6 +37,7 @@ export default function MarketingPage() {
         <HeroSection />
         <ProblemSection />
         <TrackingSection />
+        <HowItWorksSection />
         <PricingSection />
         <NameSection />
         <FaqSection />

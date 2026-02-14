@@ -1,9 +1,11 @@
 import { useTranslations } from "next-intl";
-import { WaitlistForm } from "./waitlist-form";
+import { Link } from "@/i18n/navigation";
+import { Button } from "@/components/ui/button";
 import { AnimateIn } from "./animate-in";
 
 export function CtaSection() {
   const t = useTranslations("marketing.cta");
+  const navT = useTranslations("marketing.nav");
 
   return (
     <section className="bg-gradient-to-b from-primary/5 to-background">
@@ -14,7 +16,9 @@ export function CtaSection() {
           </h2>
           <p className="mt-2 text-muted-foreground">{t("subheadline")}</p>
           <div className="mt-6 flex justify-center">
-            <WaitlistForm />
+            <Button size="lg" asChild>
+              <Link href="/signup">{navT("signup")}</Link>
+            </Button>
           </div>
         </AnimateIn>
       </div>

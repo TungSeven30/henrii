@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import { MarketingNavbar } from "@/components/marketing/navbar";
 import { HeroSection } from "@/components/marketing/hero-section";
-import { FeaturesSection } from "@/components/marketing/features-section";
-import { DifferentiatorsSection } from "@/components/marketing/differentiators-section";
-import { HowItWorksSection } from "@/components/marketing/how-it-works-section";
+import { ProblemSection } from "@/components/marketing/problem-section";
+import { TrackingSection } from "@/components/marketing/tracking-section";
 import { PricingSection } from "@/components/marketing/pricing-section";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { CtaSection } from "@/components/marketing/cta-section";
 import { MarketingFooter } from "@/components/marketing/footer";
+import { NameSection } from "@/components/marketing/name-section";
 
 export const metadata: Metadata = {
-  title: "henrii — Track tiny moments",
+  title: "henrii — Track tiny moments and parent calmly",
   description:
-    "A baby tracker that works when you can barely keep your eyes open. Track feedings, sleep, diapers, vaccinations, and growth. One hand. One tap. Done.",
+    "A baby tracker for exhausted parents that works when you can barely keep your eyes open. Track feedings, sleep, diapers, and growth fast with one-handed logging.",
   openGraph: {
     title: "henrii — Track tiny moments",
     description:
@@ -34,10 +34,10 @@ export default function MarketingPage() {
       <MarketingNavbar />
       <main>
         <HeroSection />
-        <FeaturesSection />
-        <DifferentiatorsSection />
-        <HowItWorksSection />
+        <ProblemSection />
+        <TrackingSection />
         <PricingSection />
+        <NameSection />
         <FaqSection />
         <CtaSection />
       </main>

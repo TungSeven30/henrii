@@ -38,9 +38,6 @@ export function MarketingNavbar() {
             </a>
           ))}
           <div className="flex items-center gap-2 ml-2">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">{t("login")}</Link>
-            </Button>
             <Button size="sm" asChild>
               <Link href="/signup">{t("signup")}</Link>
             </Button>
@@ -71,9 +68,6 @@ export function MarketingNavbar() {
             </a>
           ))}
           <div className="flex flex-col gap-2 pt-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/login">{t("login")}</Link>
-            </Button>
             <Button size="sm" asChild>
               <Link href="/signup">{t("signup")}</Link>
             </Button>

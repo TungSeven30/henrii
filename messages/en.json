@@ -767,10 +767,11 @@
       "subheadline": "A baby tracker that works when you can barely keep your eyes open. One hand. One tap. Done.",
       "disclaimer": "Free to use. No credit card required."
     },
-    "waitlist": {
-      "placeholder": "Enter your email",
-      "cta": "Join the waitlist",
-      "success": "You're on the list. We'll be in touch."
+    "problem": {
+      "title": "It's 3am. You don't have six taps.",
+      "line1": "The feeding happened. The diaper changed. Nap time shifted. You know one of these is important by morning.",
+      "line2": "Your baby tracker should help you capture moments fast, not force another round of decision fatigue at midnight.",
+      "line3": "henrii keeps baby tracking simple, quick, and one-handed."
     },
     "features": {
       "title": "Everything your baby needs. Nothing you don't.",
@@ -804,32 +805,11 @@
         "description": "With file attachments and reminder emails so you stop missing them."
       }
     },
-    "differentiators": {
-      "title": "What makes henrii different",
-      "offline": {
-        "title": "Works offline",
-        "description": "Log events without wifi. Everything syncs when you're back online."
-      },
-      "darkMode": {
-        "title": "Scheduled dark mode",
-        "description": "The app dims at bedtime automatically. No flashbangs during night feeds."
-      },
-      "caregivers": {
-        "title": "Caregiver sharing",
-        "description": "Invite grandparents, your partner, or a nanny. Everyone sees the same data."
-      },
-      "pdf": {
-        "title": "PDF reports",
-        "description": "Walk into your pediatrician's office with a formatted 30-day summary. One tap."
-      },
-      "analytics": {
-        "title": "Analytics that observe",
-        "description": "\"Average feeding gap: 2.5 hours\" — we show patterns, not judgments. You decide."
-      },
-      "bilingual": {
-        "title": "Bilingual from day one",
-        "description": "English and Vietnamese. More languages coming."
-      }
+    "name": {
+      "title": "Why the name \"henrii\"?",
+      "line1": "The app is named after my son, Henry.",
+      "line2": "The double i in the name is our logo idea: parent and baby side by side.",
+      "line3": "Built for parents who need support, not more complexity."
     },
     "howItWorks": {
       "title": "How it works",
@@ -909,7 +889,7 @@
     },
     "cta": {
       "headline": "Built for 3am.",
-      "subheadline": "Join the waitlist for early access."
+      "subheadline": "Get started with your free account and start tracking the details that matter."
     },
     "footer": {
       "tagline": "Track tiny moments.",

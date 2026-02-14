@@ -767,10 +767,11 @@
       "subheadline": "Ứng dụng theo dõi bé yêu hoạt động khi bạn gần như không thể mở mắt. Một tay. Một chạm. Xong.",
       "disclaimer": "Miễn phí sử dụng. Không cần thẻ tín dụng."
     },
-    "waitlist": {
-      "placeholder": "Nhập email của bạn",
-      "cta": "Đăng ký sớm",
-      "success": "Bạn đã vào danh sách. Chúng tôi sẽ liên hệ."
+    "problem": {
+      "title": "3 giờ sáng rồi. Bạn chẳng còn năng lượng cho 6 bước bấm.",
+      "line1": "Con vừa ăn xong. Tã đã đổi. Giấc ngủ chưa ổn định. Sáng mai bạn sẽ quên chi tiết nào quan trọng.",
+      "line2": "Một app theo dõi đúng cách giúp bạn ghi nhanh, không thêm áp lực đúng lúc kiệt sức nhất.",
+      "line3": "henrii được thiết kế cho thao tác nhanh, nhẹ, chỉ một tay."
     },
     "features": {
       "title": "Mọi thứ bé cần. Không gì thừa.",
@@ -803,6 +804,12 @@
         "title": "Lịch khám",
         "description": "Đính kèm tài liệu và email nhắc nhở để không quên lịch hẹn."
       }
+    },
+    "name": {
+      "title": "Vì sao tên \"henrii\"?",
+      "line1": "Ứng dụng lấy tên từ con trai tôi, Henry.",
+      "line2": "Chữ ii kép là cách nói về một người lớn đứng cạnh bé trong mọi khoảnh khắc theo dõi.",
+      "line3": "Mục tiêu vẫn là giúp cha mẹ yên tâm hơn, không phải phức tạp hơn."
     },
     "differentiators": {
       "title": "Điều gì làm henrii khác biệt",
@@ -909,7 +916,7 @@
     },
     "cta": {
       "headline": "Được xây dựng cho 3 giờ sáng.",
-      "subheadline": "Đăng ký danh sách chờ để truy cập sớm."
+      "subheadline": "Bắt đầu tài khoản miễn phí và theo dõi ngay các khoảnh khắc quan trọng."
     },
     "footer": {
       "tagline": "Ghi lại từng khoảnh khắc nhỏ.",

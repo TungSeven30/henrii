@@ -1,9 +1,11 @@
 import { useTranslations } from "next-intl";
-import { WaitlistForm } from "./waitlist-form";
+import { Link } from "@/i18n/navigation";
 import { AnimateIn } from "./animate-in";
+import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
   const t = useTranslations("marketing.hero");
+  const navT = useTranslations("marketing.nav");
 
   return (
     <section className="relative overflow-hidden">
@@ -18,7 +20,9 @@ export function HeroSection() {
             {t("subheadline")}
           </p>
           <div className="mt-8 flex justify-center">
-            <WaitlistForm />
+            <Button size="lg" asChild>
+              <Link href="/signup">{navT("signup")}</Link>
+            </Button>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
             {t("disclaimer")}

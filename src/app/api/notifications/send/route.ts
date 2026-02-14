@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import {
+  sendAppointmentPushNotification,
+  type PushSubscriptionRecord,
+} from "@/lib/notifications/push-delivery";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 function getNowWindow() {
@@ -19,6 +23,11 @@ type AppointmentRow = {
   location: string | null;
   notes: string | null;
   created_by: string;
+};
+
+type NotificationPreferenceRow = {
+  email_enabled: boolean;
+  push_enabled: boolean;
 };
 
 export async function POST(request: Request) {
@@ -67,6 +76,7 @@ export async function POST(request: Request) {
 
   for (const appointment of rows) {
     let appointmentEmailSent = false;
+    let appointmentPushSent = false;
     const { data: preference } = await supabase
       .from("notification_preferences")
       .select("email_enabled, push_enabled")
@@ -75,8 +85,9 @@ export async function POST(request: Request) {
       .eq("event_type", "appointment")
       .maybeSingle();
 
-    const emailEnabled = preference?.email_enabled ?? true;
-    const pushEnabled = preference?.push_enabled ?? false;
+    const typedPreference = preference as NotificationPreferenceRow | null;
+    const emailEnabled = typedPreference?.email_enabled ?? true;
+    const pushEnabled = typedPreference?.push_enabled ?? false;
 
     if (!emailEnabled) {
       skipped += 1;
@@ -148,19 +159,68 @@ export async function POST(request: Request) {
     if (pushEnabled) {
       const { data: pushSubscriptions } = await supabase
         .from("push_subscriptions")
-        .select("id")
+        .select("id, endpoint, p256dh, auth")
         .eq("user_id", appointment.created_by)
         .eq("baby_id", appointment.baby_id)
         .eq("enabled", true);
 
-      if (pushSubscriptions?.length) {
-        // Push is progressive enhancement; this baseline logs intent even when sender infra isn't configured.
+      const subscriptionRows = (pushSubscriptions ?? []) as PushSubscriptionRecord[];
+      if (!subscriptionRows.length) {
+        skipped += 1;
         await supabase.from("notification_logs").insert({
           appointment_id: appointment.id,
           user_id: appointment.created_by,
           channel: "push",
           status: "skipped",
-          error_message: "Push delivery backend not configured",
+          error_message: "No active push subscriptions",
+        });
+      }
+
+      for (const subscription of subscriptionRows) {
+        const pushResult = await sendAppointmentPushNotification({
+          subscription,
+          payload: {
+            appointmentId: appointment.id,
+            title: appointment.title,
+            scheduledAt: appointment.scheduled_at,
+            location: appointment.location,
+            notes: appointment.notes,
+          },
+        });
+
+        if (pushResult.ok) {
+          sent += 1;
+          appointmentPushSent = true;
+          await supabase
+            .from("push_subscriptions")
+            .update({
+              last_sent_at: new Date().toISOString(),
+              last_error: null,
+            })
+            .eq("id", subscription.id);
+          await supabase.from("notification_logs").insert({
+            appointment_id: appointment.id,
+            user_id: appointment.created_by,
+            channel: "push",
+            status: "sent",
+          });
+          continue;
+        }
+
+        skipped += 1;
+        await supabase
+          .from("push_subscriptions")
+          .update({
+            last_error: pushResult.error,
+            enabled: pushResult.disableSubscription ? false : true,
+          })
+          .eq("id", subscription.id);
+        await supabase.from("notification_logs").insert({
+          appointment_id: appointment.id,
+          user_id: appointment.created_by,
+          channel: "push",
+          status: pushResult.disableSubscription ? "failed" : "skipped",
+          error_message: pushResult.error,
         });
       }
     }
@@ -175,7 +235,7 @@ export async function POST(request: Request) {
       });
     }
 
-    if (!emailEnabled || appointmentEmailSent) {
+    if (appointmentEmailSent || appointmentPushSent || (!emailEnabled && !pushEnabled)) {
       await supabase
         .from("appointments")
         .update({ reminder_sent_at: new Date().toISOString() })

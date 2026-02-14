@@ -45,3 +45,66 @@ self.addEventListener("fetch", (event) => {
       ),
   );
 });
+
+self.addEventListener("push", (event) => {
+  let payload = {
+    title: "henrii",
+    body: "You have a new reminder.",
+    icon: "/icon-192.png",
+    badge: "/icon-192.png",
+    url: "/en/dashboard",
+    tag: "henrii-reminder",
+    data: {},
+  };
+
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      payload = {
+        ...payload,
+        ...data,
+      };
+    } catch {
+      payload = {
+        ...payload,
+        body: event.data.text(),
+      };
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: payload.icon,
+      badge: payload.badge,
+      tag: payload.tag,
+      data: {
+        ...(payload.data ?? {}),
+        url: payload.url,
+      },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const targetUrl =
+    event.notification.data?.url || "/en/dashboard";
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if (client.url.includes(targetUrl) && "focus" in client) {
+          return client.focus();
+        }
+      }
+
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(targetUrl);
+      }
+
+      return undefined;
+    }),
+  );
+});

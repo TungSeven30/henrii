@@ -12,9 +12,17 @@ export function formatBabyAge(dob: string): {
   values: Record<string, number>;
 } {
   const birthDate = new Date(dob);
+  if (Number.isNaN(birthDate.getTime())) {
+    return { key: "ageDays", values: { days: 0 } };
+  }
+
   const now = new Date();
 
   const diffMs = now.getTime() - birthDate.getTime();
+  if (diffMs <= 0) {
+    return { key: "ageDays", values: { days: 0 } };
+  }
+
   const totalDays = Math.floor(diffMs / 86_400_000);
 
   if (totalDays < 28) {

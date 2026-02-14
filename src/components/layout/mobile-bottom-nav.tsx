@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { Clock3, LayoutGrid, Settings } from "lucide-react";
+import { Clock3, Heart, LayoutGrid, Settings } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 type MobileBottomNavProps = {
   dashboardLabel: string;
   timelineLabel: string;
+  healthLabel: string;
   settingsLabel: string;
 };
 
@@ -24,6 +25,7 @@ function isHiddenPath(pathname: string) {
 export function MobileBottomNav({
   dashboardLabel,
   timelineLabel,
+  healthLabel,
   settingsLabel,
 }: MobileBottomNavProps) {
   return (
@@ -31,6 +33,7 @@ export function MobileBottomNav({
       <MobileBottomNavInner
         dashboardLabel={dashboardLabel}
         timelineLabel={timelineLabel}
+        healthLabel={healthLabel}
         settingsLabel={settingsLabel}
       />
     </Suspense>
@@ -40,6 +43,7 @@ export function MobileBottomNav({
 function MobileBottomNavInner({
   dashboardLabel,
   timelineLabel,
+  healthLabel,
   settingsLabel,
 }: MobileBottomNavProps) {
   const pathname = usePathname();
@@ -52,11 +56,12 @@ function MobileBottomNavInner({
   const view = searchParams.get("view");
   const dashboardActive = pathname.startsWith("/dashboard") && view !== "timeline";
   const timelineActive = pathname.startsWith("/dashboard") && view === "timeline";
+  const healthActive = pathname.startsWith("/health");
   const settingsActive = pathname.startsWith("/settings");
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur">
-      <ul className="grid grid-cols-3 px-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] pt-1.5">
+      <ul className="grid grid-cols-4 px-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] pt-1.5">
         <li>
           <Link
             href="/dashboard"
@@ -79,6 +84,18 @@ function MobileBottomNavInner({
           >
             <Clock3 className="h-4 w-4" />
             {timelineLabel}
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/health"
+            className={cn(
+              "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold",
+              healthActive ? "text-primary" : "text-muted-foreground",
+            )}
+          >
+            <Heart className="h-4 w-4" />
+            {healthLabel}
           </Link>
         </li>
         <li>

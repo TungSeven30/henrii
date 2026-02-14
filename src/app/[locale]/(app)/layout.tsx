@@ -16,6 +16,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
 
   const navItems = [
     { href: "/dashboard", label: nav("dashboard") },
+    { href: "/health", label: nav("health") },
     { href: "/settings", label: nav("settings") },
   ];
 
@@ -28,6 +29,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
       <MobileBottomNav
         dashboardLabel={nav("dashboard")}
         timelineLabel={dashboard("viewTimeline")}
+        healthLabel={nav("health")}
         settingsLabel={nav("settings")}
       />
     </div>

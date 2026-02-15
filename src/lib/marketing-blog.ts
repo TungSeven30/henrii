@@ -9,6 +9,7 @@ export type MarketingBlogPost = {
   readTime: number;
   author: string;
   coverImage?: string;
+  coverImageFallback?: string;
   bodyEn: string;
   bodyVi: string;
 };
@@ -32,6 +33,21 @@ const FALLBACK_EARLY_ACCESS_COVER =
 const FALLBACK_TODDLER_COVER =
   "https://private-us-east-1.manuscdn.com/sessionFile/Yqb0N7s7iBUqXrW0bKMS7H/sandbox/ruZCkld1d0nXItuMTQNzYX-img-1_1770731037000_na1fn_YmxvZy1jb3Zlci10b2RkbGVyLW1pbGVzdG9uZXM.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWXFiME43czdpQlVxWHJXMGJLTVM3SC9zYW5kYm94L3J1WkNrbGQxZDBuWEl0dU1UUU56WVgtaW1nLTFfMTc3MDczMTAzNzAwMF9uYTFmbl9ZbXh2WnkxamIzWmxjaTEwYjJSa2JHVnlMVzFwYkdWemRHOXVaWE0ucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=KailNsoH3gD0un08WcP0mLjoY3dlE56M9OARxwOJ3wlDGG~eRTxZ9E~3UN7k1e7EYxLKSMJAuafTAuiL18FpjZOsmjE2wdqTaiy8cuWrODmmWyBuBGw0jr6p7~4miyddInC4VnZ9ywFQ5mQDKxwyx4M3ah3i08Mxeg7A2M-lhpIfKg~lQJfYfWipyqMGQiYuT~Nkt3JemJz-6JUYUiKCWr8DUbMrtt1Pv6hz87IsAbGYIfmZ71yW5NrcpTa2BBHFgrFRcPFubw39i~OHVnDQmnvxGvOccz0~LlI7x7iDkntG~aa3oou9540aAZ99IazetAx9-Jk7pFCh6jbO7GzC8A__";
 
+const FALLBACK_COVER_POST_1 = "/marketing/blog-why-we-built.webp";
+const FALLBACK_COVER_POST_2 = "/marketing/blog-newborn-sleep.webp";
+const FALLBACK_COVER_POST_3 = "/marketing/blog-feeding-schedule.webp";
+const FALLBACK_COVER_POST_4 = "/marketing/blog-early-access.webp";
+const FALLBACK_COVER_POST_5 = "/marketing/blog-toddler-milestones.webp";
+const GENERIC_BLOG_COVER = "/marketing/article-cover.svg";
+
+const BLOG_COVER_FALLBACKS: Record<string, string> = {
+  "toddler-milestones-worth-tracking": FALLBACK_COVER_POST_5,
+  "henrii-early-access-announcement": FALLBACK_COVER_POST_4,
+  "why-we-built-henrii": FALLBACK_COVER_POST_1,
+  "newborn-sleep-tracking-guide": FALLBACK_COVER_POST_2,
+  "feeding-schedule-first-months": FALLBACK_COVER_POST_3,
+};
+
 const MARKETING_BLOG_POSTS: MarketingBlogPost[] = [
   {
     slug: "toddler-milestones-worth-tracking",
@@ -43,6 +59,7 @@ const MARKETING_BLOG_POSTS: MarketingBlogPost[] = [
     readTime: 6,
     author: "henrii team",
     coverImage: FALLBACK_TODDLER_COVER,
+    coverImageFallback: BLOG_COVER_FALLBACKS["toddler-milestones-worth-tracking"],
     bodyEn: `Your baby didn't ask to become a toddler. Somewhere between the midnight feedings and diaper changes, they started pulling themselves up, pointing at things, and developing very strong opinions about bananas.
 
 Welcome to toddlerhood. It can be messy, loud, and full of milestones — some you'll celebrate with tears of joy, others you'll barely notice until someone asks you about them at a checkup.
@@ -148,6 +165,7 @@ Bạn không cần ghi tất cả, chỉ cần ghi các mốc và cảm nhận c
     readTime: 3,
     author: "henrii team",
     coverImage: FALLBACK_EARLY_ACCESS_COVER,
+    coverImageFallback: BLOG_COVER_FALLBACKS["henrii-early-access-announcement"],
     bodyEn: `We're close to opening henrii to first users.
 
 ## What's in the early access release
@@ -199,6 +217,7 @@ Gói cao cấp sẽ có biểu đồ tăng trưởng, phân tích và PDF.`,
     readTime: 4,
     author: "henrii team",
     coverImage: FALLBACK_COVER,
+    coverImageFallback: BLOG_COVER_FALLBACKS["why-we-built-henrii"],
     bodyEn: `We built henrii because we were tired of baby tracking apps that make you tap too much.
 
 At 3am, your mind is already overloaded. When your baby wakes up, you need one quick action, not another complex flow.
@@ -250,6 +269,7 @@ Trong thực tế lại khác:
     readTime: 5,
     author: "henrii team",
     coverImage: FALLBACK_SLEEP_COVER,
+    coverImageFallback: BLOG_COVER_FALLBACKS["newborn-sleep-tracking-guide"],
     bodyEn: `Sleep tracking for newborns is not about optimization.
 
 It helps you answer two simple questions:
@@ -301,6 +321,7 @@ Lúc 3 giờ sáng, app phải chạy được khi bạn mờ mắt và một ta
     readTime: 6,
     author: "henrii team",
     coverImage: FALLBACK_FEEDING_COVER,
+    coverImageFallback: BLOG_COVER_FALLBACKS["feeding-schedule-first-months"],
     bodyEn: `The first three months can feel relentless.
 
 Feedings often feel all over the place. Tracking helps you notice patterns without turning into a spreadsheet.
@@ -328,7 +349,12 @@ Khi nhìn thấy xu hướng rõ hơn, việc chăm bé đỡ căng thẳng hơn
 ];
 
 export function getMarketingBlogPosts(): MarketingBlogPost[] {
-  return [...MARKETING_BLOG_POSTS].sort((a, b) => +new Date(b.date) - +new Date(a.date));
+  return [...MARKETING_BLOG_POSTS]
+    .sort((a, b) => +new Date(b.date) - +new Date(a.date))
+    .map((post) => ({
+      ...post,
+      coverImageFallback: post.coverImageFallback ?? BLOG_COVER_FALLBACKS[post.slug] ?? GENERIC_BLOG_COVER,
+    }));
 }
 
 export function getMarketingBlogPost(

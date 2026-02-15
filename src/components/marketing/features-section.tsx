@@ -1,6 +1,15 @@
 import { useTranslations } from "next-intl";
 import { AnimateIn } from "./animate-in";
 import { FileText, Moon, Shield, Users, Wifi, Zap } from "lucide-react";
+import { SafeImage } from "./safe-image";
+
+const OFFLINE_IMG = "/marketing/feature-offline.webp";
+const DARKMODE_IMG = "/marketing/feature-darkmode.webp";
+const SHARING_IMG = "/marketing/feature-sharing.webp";
+
+const OFFLINE_FALLBACK = "/marketing/feature-offline.webp";
+const DARKMODE_FALLBACK = "/marketing/feature-darkmode.webp";
+const SHARING_FALLBACK = "/marketing/feature-sharing.webp";
 
 const FEATURE_KEYS = [
   "offline",
@@ -12,12 +21,21 @@ const FEATURE_KEYS = [
 ] as const;
 
 const FEATURE_IMAGES: Record<(typeof FEATURE_KEYS)[number], string | null> = {
-  offline: "/marketing/feature-offline.svg",
-  darkMode: "/marketing/feature-darkmode.svg",
-  caregivers: "/marketing/feature-sharing.svg",
+  offline: OFFLINE_IMG,
+  darkMode: DARKMODE_IMG,
+  caregivers: SHARING_IMG,
   pdf: null,
   analytics: null,
   bilingual: null,
+};
+
+const FEATURE_IMAGE_FALLBACKS: Record<(typeof FEATURE_KEYS)[number], string> = {
+  offline: OFFLINE_FALLBACK,
+  darkMode: DARKMODE_FALLBACK,
+  caregivers: SHARING_FALLBACK,
+  pdf: OFFLINE_FALLBACK,
+  analytics: DARKMODE_FALLBACK,
+  bilingual: SHARING_FALLBACK,
 };
 
 const FEATURE_ICONS = {
@@ -95,8 +113,9 @@ function FeaturePanel({
           <div
             className={`rounded-3xl bg-gradient-to-br ${FEATURE_IMAGES_GLOW[featureKey]} border border-border p-5`}
           >
-            <img
+            <SafeImage
               src={imageSrc}
+              fallbackSrc={FEATURE_IMAGE_FALLBACKS[featureKey]}
               alt={t(`${featureKey}.title`)}
               className="h-56 w-full rounded-2xl border border-border/80 object-cover md:h-64"
               loading="lazy"

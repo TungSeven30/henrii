@@ -1,9 +1,11 @@
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { MarketingLogo } from "./henrii-logo";
 
 export function MarketingFooter() {
   const t = useTranslations("marketing.footer");
+  const locale = useLocale();
 
   return (
     <footer className="border-t border-border bg-card/30">
@@ -16,19 +18,19 @@ export function MarketingFooter() {
 
           <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground justify-center">
             <Link
-              href="/blog"
+              href={`/${locale}/blog`}
               className="hover:text-foreground transition-colors"
             >
               {t("blog")}
             </Link>
             <Link
-              href="/privacy"
+              href={`/${locale}/privacy`}
               className="hover:text-foreground transition-colors"
             >
               {t("privacy")}
             </Link>
             <Link
-              href="/terms"
+              href={`/${locale}/terms`}
               className="hover:text-foreground transition-colors"
             >
               {t("terms")}

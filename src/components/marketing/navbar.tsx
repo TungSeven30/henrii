@@ -3,6 +3,7 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { MarketingLogo } from "./henrii-logo";
@@ -15,6 +16,7 @@ const NAV_LINKS = [
 ] as const;
 
 export function MarketingNavbar() {
+  const locale = useLocale();
   const t = useTranslations("marketing.nav");
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -36,7 +38,7 @@ export function MarketingNavbar() {
     >
       <nav className="container h-16 md:h-18 flex items-center justify-between gap-4">
         <Link
-          href="/"
+          href={`/${locale}`}
           aria-label="henrii home"
           className="inline-flex items-center gap-2"
         >
@@ -61,7 +63,7 @@ export function MarketingNavbar() {
               return (
                 <Link
                   key={key}
-                  href={href}
+                  href={`/${locale}${href}`}
                   className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-card"
                 >
                   {t(key)}
@@ -71,7 +73,7 @@ export function MarketingNavbar() {
           </div>
 
           <Button size="sm" asChild className="rounded-full">
-            <Link href="/signup">{t("signup")}</Link>
+            <Link href={`/${locale}/signup`}>{t("signup")}</Link>
           </Button>
         </div>
 
@@ -104,7 +106,7 @@ export function MarketingNavbar() {
               return (
                 <Link
                   key={key}
-                  href={href}
+                  href={`/${locale}${href}`}
                   className="block rounded-lg px-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors hover:bg-card"
                   onClick={() => setMenuOpen(false)}
                 >
@@ -114,7 +116,7 @@ export function MarketingNavbar() {
             })}
 
             <Button size="sm" asChild className="w-full mt-1">
-              <Link href="/signup" onClick={() => setMenuOpen(false)}>
+              <Link href={`/${locale}/signup`} onClick={() => setMenuOpen(false)}>
                 {t("signup")}
               </Link>
             </Button>

@@ -96,7 +96,7 @@ export default async function BlogPostPage({ params }: Params) {
   return (
     <main className="mx-auto max-w-4xl px-4 py-12 md:py-16">
       <Link
-        href="/blog"
+        href={`/${locale}/blog`}
         className="mb-6 inline-flex text-sm text-muted-foreground hover:text-foreground"
       >
         {t("backToBlog")}
@@ -115,7 +115,7 @@ export default async function BlogPostPage({ params }: Params) {
           <div className="mt-5">
             <SafeImage
               src={post.coverImage}
-              fallbackSrc="/marketing/article-cover.svg"
+              fallbackSrc={post.coverImageFallback ?? "/marketing/article-cover.svg"}
               alt={post.title}
               className="w-full rounded-xl border border-border"
               loading="eager"
@@ -133,7 +133,7 @@ export default async function BlogPostPage({ params }: Params) {
             {related.map((item) => (
               <Link
                 key={item.slug}
-                href={`/blog/${item.slug}`}
+                href={`/${locale}/blog/${item.slug}`}
                 className="rounded-xl border border-border bg-card p-4 hover:border-primary/30"
               >
                 <p className="text-xs text-muted-foreground">

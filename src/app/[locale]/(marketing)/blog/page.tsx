@@ -46,11 +46,14 @@ export default async function MarketingBlogPage({ params }: Props) {
 
       <section className="mt-10 grid gap-6 md:grid-cols-2">
         {posts.map((post) => (
-          <article key={post.slug} className="rounded-2xl border border-border bg-card overflow-hidden">
+          <article
+            key={post.slug}
+            className="rounded-2xl border border-border bg-card overflow-hidden"
+          >
             {post.coverImage ? (
               <SafeImage
                 src={post.coverImage}
-                fallbackSrc="/marketing/article-cover.svg"
+                fallbackSrc={post.coverImageFallback ?? "/marketing/article-cover.svg"}
                 alt={post.title}
                 className="h-48 w-full object-cover"
                 loading="lazy"
@@ -65,12 +68,12 @@ export default async function MarketingBlogPage({ params }: Props) {
               <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
               <p className="mt-4 text-xs text-muted-foreground">{post.author}</p>
               <div className="mt-4">
-              <Link
-                href={`/blog/${post.slug}`}
-                className="inline-flex text-sm font-medium text-primary hover:text-primary/80"
-              >
-                {t("readMore")}
-              </Link>
+                <Link
+                  href={`/${locale}/blog/${post.slug}`}
+                  className="inline-flex text-sm font-medium text-primary hover:text-primary/80"
+                >
+                  {t("readMore")}
+                </Link>
               </div>
             </div>
           </article>

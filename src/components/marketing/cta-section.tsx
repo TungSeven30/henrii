@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -8,6 +9,9 @@ export function CtaSection() {
   const t = useTranslations("marketing.cta");
   const heroT = useTranslations("marketing.hero");
   const navT = useTranslations("marketing.nav");
+  const featuresHref = "/#features";
+  const locale = useLocale();
+  const signupHref = `/${locale}/signup`;
 
   return (
     <section className="relative overflow-hidden py-16 md:py-20">
@@ -23,10 +27,10 @@ export function CtaSection() {
           <p className="mt-3 text-muted-foreground">{t("subheadline")}</p>
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Button size="lg" asChild>
-              <Link href="/signup">{navT("signup")}</Link>
+              <Link href={signupHref}>{navT("signup")}</Link>
             </Button>
             <Link
-              href="/#features"
+              href={featuresHref}
               className="inline-flex h-11 items-center rounded-full border border-border bg-background/75 px-5 text-sm font-medium text-foreground"
             >
               {heroT("secondary_cta")}
